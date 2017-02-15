@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GoJob.iml" filepath="$PROJECT_DIR$/GoJob.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bottom-navigation-bar/bottom-navigation-bar.iml" filepath="$PROJECT_DIR$/bottom-navigation-bar/bottom-navigation-bar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bottom_navigation/bottom_navigation.iml" filepath="$PROJECT_DIR$/bottom_navigation/bottom_navigation.iml" />
     </modules>
   </component>
 </project>

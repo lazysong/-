@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryDark">#026057</color>
+    <color name="colorTransparent">#1f121212</color>
+    <color name="colorAccent">#64ea70</color>
+
+    <color name="teal">#00796B</color>
+    <color name="brown">#8D6E63</color>
+    <color name="blue">#2196F3</color>
+    <color name="grey">#607D8B</color>
+    <color name="orange">#F57C00</color>
+    <color name="red">#fd5356</color>
+    <color name="white">#fcfcfc</color>
+
+    <color name="colorPrice">#f94141</color>
+    <color name="colorTextInDarkBackground">#f9f9f9</color>
+
+    <color name="ColorActionBarTitleBase">#FFFFFF</color>
+    <color name="ColorListviewBackgroundLight">#ededed</color>
+    <color name="ColorTextGray">#797979</color>
+    <color name="ColorTextLightGray">#ababab</color>
+    <color name="ColorFragmetBackgroundLight">#dddddd</color>
+    <color name="ColorListviewIconBackground">#bababa</color>
+    <color name="ColorFragmetBackgroundDark">#4d4d4d</color>
+</resources>
