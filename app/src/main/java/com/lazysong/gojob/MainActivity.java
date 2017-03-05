@@ -1,20 +1,38 @@
 package com.lazysong.gojob;
 
+import android.net.Uri;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.lazysong.gojob.fragment.HomeFragment;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener{
+public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener, HomeFragment.OnFragmentInteractionListener{
     private BottomNavigationBar bottomNavigationBar;
+    private int position = 0;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initBottomNavigationBar();
+        //设置默认的Fragment，即HomeFramgnet
+        setFragment(position);
+        //设置ToolBar
+        setToolBar();
+    }
+
+    private void setToolBar() {
+        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+        Toast.makeText(this, "setToolbarTitle() is called in setToolBar() position is " + position, Toast.LENGTH_SHORT).show();
+        setToolbarTitle(position);
     }
 
     /*
@@ -26,10 +44,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         bottomNavigationBar
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC
                 );
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_home_white_24dp, "首页").setActiveColorResource(R.color.colorPrimary))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_bottomtabbar_discover, "发现").setActiveColorResource(R.color.colorPrimary))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_bottomtabbar_message, "消息").setActiveColorResource(R.color.colorPrimary))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_person, "账户").setActiveColorResource(R.color.colorPrimary))
+        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_home_white_24dp, R.string.home).setActiveColorResource(R.color.colorPrimary))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_bottomtabbar_discover, R.string.explore).setActiveColorResource(R.color.colorPrimary))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_bottomtabbar_message, R.string.message).setActiveColorResource(R.color.colorPrimary))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_person, R.string.account).setActiveColorResource(R.color.colorPrimary))
                 .setFirstSelectedPosition(0)
                 .initialise();
         bottomNavigationBar.setTabSelectedListener(this);
@@ -37,7 +55,31 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
     @Override
     public void onTabSelected(int position) {
-        Toast.makeText(this,"tab" + position + " is selected", Toast.LENGTH_SHORT).show();
+        this.position = position;
+        if(findViewById(R.id.main_container) != null) {
+            setFragment(position);
+        }
+        setToolbarTitle(position);
+    }
+
+    // 设置顶部栏的标题
+    private void setToolbarTitle(int position) {
+        switch (position) {
+            case 0:
+                toolbar.setTitle(R.string.home);
+                break;
+            case 1:
+                toolbar.setTitle(R.string.explore);
+                break;
+            case 2:
+                toolbar.setTitle(R.string.message);
+                break;
+            case 3:
+                toolbar.setTitle(R.string.account);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -48,5 +90,24 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     @Override
     public void onTabReselected(int position) {
 
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    void setFragment(int position) {
+        // 创建一个HomeFragment的实例，并且向其传入参数position
+        Fragment fragment = new HomeFragment();
+        Bundle args = new Bundle();
+        args.putInt("position", position);
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (transaction.isEmpty())
+            transaction.add(R.id.main_container, fragment).commit();
+        else
+            transaction.replace(R.id.main_container, fragment).commit();
     }
 }
