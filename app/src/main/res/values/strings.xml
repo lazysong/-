@@ -10,5 +10,8 @@
     <string name="login">登录</string>
     <string name="qq_login">通过QQ登录</string>
     <string name="query">查询mysql数据库</string>
+    <string name="toAccount">转到账户界面</string>
+    <string name="nickname">用户昵称</string>
+    <string name="editUserInfo">点击编辑用户信息</string>
 
 </resources>

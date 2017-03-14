@@ -1,39 +1,31 @@
 package com.lazysong.gojob.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.lazysong.gojob.AccountActivity;
-import com.lazysong.gojob.QQLoginActivity;
-import com.lazysong.gojob.QueryActivity;
+import com.lazysong.gojob.PreferenceUtils;
 import com.lazysong.gojob.R;
-import com.tencent.tauth.IUiListener;
-import com.tencent.tauth.Tencent;
+import com.lazysong.gojob.com.lazysong.gojob.beans.User;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
+ * {@link AccountFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
+ * Use the {@link AccountFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class AccountFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -42,16 +34,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private User user;
+    private boolean logined;
 
     private OnFragmentInteractionListener mListener;
-    private TextView textView;
-    private Button buttonLogin;
-    private Button buttonQuery;
-    private Button buttonToAccount;
-    private int position;
-    private EditText editTextLimit;
 
-    public HomeFragment() {
+    private RelativeLayout layoutUserInfo;
+    private TextView tvNickname;
+
+    public AccountFragment() {
         // Required empty public constructor
     }
 
@@ -61,11 +52,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
+     * @return A new instance of fragment AccountFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
+    public static AccountFragment newInstance(String param1, String param2) {
+        AccountFragment fragment = new AccountFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -86,21 +77,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        //获取当前点击的位置并显示
-        position = getArguments().getInt("position");
-        textView = (TextView) view.findViewById(R.id.textview);
-        textView.setText("Hello this is fragment " + position);
-        editTextLimit = (EditText) view.findViewById(R.id.editTextLimit);
-
-        buttonLogin = (Button) view.findViewById(R.id.login);
-        buttonLogin.setOnClickListener(this);
-        buttonQuery = (Button) view.findViewById(R.id.btnQuery);
-        buttonQuery.setOnClickListener(this);
-        buttonToAccount = (Button)view.findViewById(R.id.btnToAccount);
-        buttonToAccount.setOnClickListener(this);
-
+        View view = inflater.inflate(R.layout.fragment_account, container, false);
+        loadLoginState();
+        initViews(view);
+        if(!logined) {
+            tvNickname.setText("点击登录");
+        }
+        else {
+            tvNickname.setText("用户已登录");
+        }
         return view;
+    }
+
+    private void initViews(View view) {
+        tvNickname = (TextView) view.findViewById(R.id.tvNickname);
+        layoutUserInfo = (RelativeLayout) view.findViewById(R.id.layoutUserInfo);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -127,37 +118,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent();
-        final int id = v.getId();
-        switch (id) {
-            case R.id.login:
-                intent.setClass(getContext(), QQLoginActivity.class);
-                intent.putExtra("appId", "1106011236");
-                startActivity(intent);
-                break;
-            case R.id.btnQuery:
-                intent.setClass(getContext(), QueryActivity.class);
-                String limit = editTextLimit.getText().toString();
-                intent.putExtra("limit", limit);
-                startActivity(intent);
-                break;
-            case R.id.btnToAccount:
-                intent.setClass(getContext(), AccountActivity.class);
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
@@ -167,8 +133,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         void onFragmentInteraction(Uri uri);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void loadLoginState() {
+        user = new User();
+        JSONObject jsonObject = PreferenceUtils.getLogPref(getContext());
+        try {
+            logined = jsonObject.getBoolean("logined");
+            user.setUserid(jsonObject.getString("userId"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

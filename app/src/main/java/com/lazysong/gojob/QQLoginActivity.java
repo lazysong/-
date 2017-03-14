@@ -1,15 +1,14 @@
 package com.lazysong.gojob;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,44 +38,51 @@ public class QQLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qqlogin);
 
+        //从intent中获取到appId，作为通过QQ登录的重要参数之一
         Intent intent = getIntent();
         appId = intent.getStringExtra("appId");
-//        Toast.makeText(this, "appId: " + appId, Toast.LENGTH_SHORT).show();
+        //创建mTencent实例，作为QQ登录的事务代理
         if (mTencent == null)
             mTencent = Tencent.createInstance(appId, this);
 
         initViews();
+        initListener();
+    }
 
-        btnQQLogin = (Button) findViewById(R.id.btnQQLogin);
+    //为控件设置监听器
+    private void initListener() {
         btnQQLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 QQLogin();
             }
         });
-
     }
 
+    //对布局控件进行初始化
     private void initViews() {
-
         mUserInfo = (TextView) findViewById(R.id.userInfo);
         mUserImg = (ImageView) findViewById(R.id.userImg);
+        btnQQLogin = (Button) findViewById(R.id.btnQQLogin);
     }
 
+    //执行通过QQ登录的操作
     private void QQLogin() {
         if (!mTencent.isSessionValid()) {
             mTencent.login(this, "all", loginListener);
             isLogin = true;
+            PreferenceUtils.setLoginPref(this, true,mTencent.getOpenId());
         } else {
             if (!isLogin) {
                 mTencent.login(this, "all", loginListener);
                 isLogin = true;
+                PreferenceUtils.setLoginPref(this, true,mTencent.getOpenId());
             }
             else {
                 mTencent.logout(this);
                 isLogin = false;
+                PreferenceUtils.setLoginPref(this, false, null);
             }
-
             updateUserInfo();
             updateLoginButton();
         }
@@ -87,11 +93,13 @@ public class QQLoginActivity extends AppCompatActivity {
         protected void doComplete(JSONObject values) {
             initOpenidAndToken(values);
             updateUserInfo();
+            PreferenceUtils.setLoginPref(QQLoginActivity.this, true, mTencent.getOpenId());
             updateLoginButton();
-            Toast.makeText(QQLoginActivity.this, "accessId" + mTencent.getAccessToken(), Toast.LENGTH_SHORT).show();
         }
     };
 
+
+    //根据网络请求的返回结果设置OpenId和AccessToken
     public static void initOpenidAndToken(JSONObject jsonObject) {
         try {
             String token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
@@ -109,10 +117,8 @@ public class QQLoginActivity extends AppCompatActivity {
     private void updateUserInfo() {
         if (mTencent != null && mTencent.isSessionValid()) {
             IUiListener listener = new IUiListener() {
-
                 @Override
                 public void onError(UiError e) {
-
                 }
 
                 @Override

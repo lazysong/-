@@ -34,5 +34,11 @@
         android:layout_height="wrap_content"
         android:text="@string/query"
         android:textSize="24sp"/>
+    <Button
+        android:id="@+id/btnToAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/toAccount"
+        android:textSize="24sp"/>
 
 </LinearLayout>
