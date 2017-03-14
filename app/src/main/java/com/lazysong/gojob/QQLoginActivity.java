@@ -68,6 +68,12 @@ public class QQLoginActivity extends AppCompatActivity {
 
     //执行通过QQ登录的操作
     private void QQLogin() {
+        JSONObject jsonObject = PreferenceUtils.getLogPref(this);
+        try {
+            isLogin = jsonObject.getBoolean("logined");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         if (!mTencent.isSessionValid()) {
             mTencent.login(this, "all", loginListener);
             isLogin = true;
