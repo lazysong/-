@@ -38,7 +38,9 @@
             android:screenOrientation="behind"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".QueryActivity" />
-        <activity android:name=".AccountActivity"></activity>
+        <activity android:name=".AccountActivity" />
+        <activity android:name=".EditUserInfoActivity" />
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

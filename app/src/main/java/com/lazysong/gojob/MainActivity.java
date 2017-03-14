@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private Toolbar toolbar;
     private List<Fragment> fragmentList;
     private Fragment currentFragment;
+    public static String appId = "1106011236";
+    public static int RESULT_LOGOUT = 1;
+    public static int REQUEST_SETTINGS = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

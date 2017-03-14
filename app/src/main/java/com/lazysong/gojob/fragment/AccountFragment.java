@@ -1,18 +1,36 @@
 package com.lazysong.gojob.fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.lazysong.gojob.EditUserInfoActivity;
+import com.lazysong.gojob.MainActivity;
 import com.lazysong.gojob.PreferenceUtils;
 import com.lazysong.gojob.R;
+import com.lazysong.gojob.SettingsActivity;
+import com.lazysong.gojob.Util;
 import com.lazysong.gojob.com.lazysong.gojob.beans.User;
+import com.tencent.connect.UserInfo;
+import com.tencent.connect.common.Constants;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +43,7 @@ import org.json.JSONObject;
  * Use the {@link AccountFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AccountFragment extends Fragment{
+public class AccountFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,6 +59,10 @@ public class AccountFragment extends Fragment{
 
     private RelativeLayout layoutUserInfo;
     private TextView tvNickname;
+    private ImageView userImage;
+    private RelativeLayout layoutSettings;
+    private static Tencent mTencent;
+    private UserInfo mInfo;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -54,7 +76,6 @@ public class AccountFragment extends Fragment{
      * @param param2 Parameter 2.
      * @return A new instance of fragment AccountFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static AccountFragment newInstance(String param1, String param2) {
         AccountFragment fragment = new AccountFragment();
         Bundle args = new Bundle();
@@ -86,15 +107,21 @@ public class AccountFragment extends Fragment{
         else {
             tvNickname.setText("用户已登录");
         }
+        //创建mTencent实例，作为QQ登录的事务代理
+        if (mTencent == null)
+            mTencent = Tencent.createInstance(MainActivity.appId, getContext());
+        initListener();
         return view;
     }
 
+    //对布局控件进行初始化
     private void initViews(View view) {
         tvNickname = (TextView) view.findViewById(R.id.tvNickname);
         layoutUserInfo = (RelativeLayout) view.findViewById(R.id.layoutUserInfo);
+        userImage = (ImageView) view.findViewById(R.id.imgUser);
+        layoutSettings = (RelativeLayout) view.findViewById(R.id.layoutSettings);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -116,6 +143,18 @@ public class AccountFragment extends Fragment{
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent();
+        final int id = v.getId();
+        switch (id) {
+            case R.id.layoutSettings:
+                intent.setClass(getContext(), SettingsActivity.class);
+                startActivityForResult(intent, MainActivity.REQUEST_SETTINGS);
+                break;
+        }
     }
 
     /**
@@ -142,5 +181,222 @@ public class AccountFragment extends Fragment{
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    //为控件设置监听器
+    private void initListener() {
+        layoutUserInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!logined)
+                    QQLogin();
+                else {
+                    //跳转到编辑用户信息界面
+                    Intent intent = new Intent();
+                    intent.setClass(getContext(), EditUserInfoActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+        layoutSettings.setOnClickListener(this);
+    }
+
+    //执行通过QQ登录的操作
+    private void QQLogin() {
+        JSONObject jsonObject = PreferenceUtils.getLogPref(getContext());
+        try {
+            logined = jsonObject.getBoolean("logined");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (!mTencent.isSessionValid()) {
+            mTencent.login(this, "all", loginListener);
+            logined = true;
+            PreferenceUtils.setLoginPref(getContext(), true,mTencent.getOpenId());
+        } else {
+            if (!logined) {
+                mTencent.login(this, "all", loginListener);
+                logined = true;
+                PreferenceUtils.setLoginPref(getContext(), true,mTencent.getOpenId());
+            }
+            else {
+                mTencent.logout(getContext());
+                logined = false;
+                PreferenceUtils.setLoginPref(getContext(), false, null);
+            }
+            updateUserInfo();
+            updateLoginButton();
+        }
+    }
+
+    IUiListener loginListener = new BaseUiListener() {
+        @Override
+        protected void doComplete(JSONObject values) {
+            initOpenidAndToken(values);
+            updateUserInfo();
+            PreferenceUtils.setLoginPref(getContext(), true, mTencent.getOpenId());
+            updateLoginButton();
+        }
+    };
+
+
+    //根据网络请求的返回结果设置OpenId和AccessToken
+    public static void initOpenidAndToken(JSONObject jsonObject) {
+        try {
+            String token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
+            String expires = jsonObject.getString(Constants.PARAM_EXPIRES_IN);
+            String openId = jsonObject.getString(Constants.PARAM_OPEN_ID);
+            if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
+                    && !TextUtils.isEmpty(openId)) {
+                mTencent.setAccessToken(token, expires);
+                mTencent.setOpenId(openId);
+            }
+        } catch(Exception e) {
+        }
+    }
+
+    private void updateUserInfo() {
+        if (mTencent != null && mTencent.isSessionValid()) {
+            IUiListener listener = new IUiListener() {
+                @Override
+                public void onError(UiError e) {
+                }
+
+                @Override
+                public void onComplete(final Object response) {
+                    Message msg = new Message();
+                    msg.obj = response;
+                    msg.what = 0;
+                    mHandler.sendMessage(msg);
+                    new Thread(){
+
+                        @Override
+                        public void run() {
+                            JSONObject json = (JSONObject)response;
+                            if(json.has("figureurl")){
+                                Bitmap bitmap = null;
+                                try {
+                                    bitmap = Util.getbitmap(json.getString("figureurl_qq_2"));
+                                } catch (JSONException e) {
+
+                                }
+                                Message msg = new Message();
+                                msg.obj = bitmap;
+                                msg.what = 1;
+                                mHandler.sendMessage(msg);
+                            }
+                        }
+
+                    }.start();
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+            };
+            mInfo = new UserInfo(getContext(), mTencent.getQQToken());
+            mInfo.getUserInfo(listener);
+
+        } else {
+            tvNickname.setText(R.string.login);
+            userImage.setImageResource(R.drawable.bilibili);
+//            tvNickname.setVisibility(android.view.View.GONE);
+//            userImage.setVisibility(android.view.View.GONE);
+        }
+    }
+
+    Handler mHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
+                JSONObject response = (JSONObject) msg.obj;
+                if (response.has("nickname")) {
+                    try {
+                        tvNickname.setVisibility(android.view.View.VISIBLE);
+                        tvNickname.setText(response.getString("nickname"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else if(msg.what == 1){
+                Bitmap bitmap = (Bitmap)msg.obj;
+                userImage.setImageBitmap(bitmap);
+                userImage.setVisibility(android.view.View.VISIBLE);
+            }
+        }
+
+    };
+
+    private void updateLoginButton() {
+        if (mTencent != null && mTencent.isSessionValid()) {
+            if (!logined) {
+                tvNickname.setText("登录");
+            } else {
+//                btnQQLogin.setTextColor(Color.RED);
+//                btnQQLogin.setText("退出帐号");
+            }
+        }
+        else {
+            tvNickname.setText("登录");
+        }
+    }
+
+    private class BaseUiListener implements IUiListener {
+
+        @Override
+        public void onComplete(Object response) {
+            if (null == response) {
+                Util.showResultDialog(getContext(), "返回为空", "登录失败");
+                return;
+            }
+            JSONObject jsonResponse = (JSONObject) response;
+            if (null != jsonResponse && jsonResponse.length() == 0) {
+                Util.showResultDialog(getContext(), "返回为空", "登录失败");
+                return;
+            }
+            Util.showResultDialog(getContext(), response.toString(), "登录成功");
+            /*// 有奖分享处理
+            handlePrizeShare();*/
+            doComplete((JSONObject)response);
+        }
+
+        protected void doComplete(JSONObject values) {
+
+        }
+
+        @Override
+        public void onError(UiError e) {
+            Util.toastMessage(getActivity(), "onError: " + e.errorDetail);
+            Util.dismissDialog();
+        }
+
+        @Override
+        public void onCancel() {
+            Util.toastMessage(getActivity(), "onCancel: ");
+            Util.dismissDialog();
+            if (logined) {
+                logined = false;
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.REQUEST_LOGIN ||
+                requestCode == Constants.REQUEST_APPBAR) {
+            Tencent.onActivityResultData(requestCode,resultCode,data,loginListener);
+        }
+        else if (requestCode == MainActivity.REQUEST_SETTINGS && resultCode == MainActivity.RESULT_LOGOUT) {
+            Toast.makeText(getContext(), "reslutCode == RESULT_LOGOUT", Toast.LENGTH_SHORT).show();
+            mTencent.logout(getContext());
+            logined = false;
+            PreferenceUtils.setLoginPref(getContext(), false, null);
+//            updateLoginButton();
+            updateUserInfo();
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

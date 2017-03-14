@@ -13,5 +13,6 @@
     <string name="toAccount">转到账户界面</string>
     <string name="nickname">用户昵称</string>
     <string name="editUserInfo">点击编辑用户信息</string>
+    <string name="logout">退出当前账号</string>
 
 </resources>
