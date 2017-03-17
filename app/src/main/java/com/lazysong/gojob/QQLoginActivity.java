@@ -1,5 +1,6 @@
 package com.lazysong.gojob;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -23,6 +24,11 @@ import com.tencent.tauth.UiError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class QQLoginActivity extends AppCompatActivity {
     private String appId;
@@ -188,6 +194,7 @@ public class QQLoginActivity extends AppCompatActivity {
                 Bitmap bitmap = (Bitmap)msg.obj;
                 mUserImg.setImageBitmap(bitmap);
                 mUserImg.setVisibility(android.view.View.VISIBLE);
+                savePic(bitmap, "userPic");
             }
         }
 
@@ -256,5 +263,25 @@ public class QQLoginActivity extends AppCompatActivity {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void savePic(Bitmap bitmap,String picName) {
+            File f = new File("/sdcard/namecard/", picName);
+            if (f.exists()) {
+                f.delete();
+            }
+            try {
+//                FileOutputStream out = new FileOutputStream(f);
+                FileOutputStream out = openFileOutput(picName+".png", Context.MODE_PRIVATE);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                out.flush();
+                out.close();
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
     }
 }

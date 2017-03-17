@@ -13,16 +13,26 @@ public class User {
     private String imgname;
     private int sex;
     private Date birthday;
+    private String sign;
 
-    public User() {
-    }
-
-    public User(String userid, String nickname, String imgname, int sex, Date birthday) {
+    public User(String userid, String nickname, String imgname, int sex, Date birthday, String sign) {
         this.userid = userid;
         this.nickname = nickname;
         this.imgname = imgname;
         this.sex = sex;
         this.birthday = birthday;
+        this.sign = sign;
+    }
+
+    public User() {
+    }
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
     }
 
     public String getNickname() {

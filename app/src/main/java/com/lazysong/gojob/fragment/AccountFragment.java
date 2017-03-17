@@ -3,6 +3,7 @@ package com.lazysong.gojob.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,10 @@ import com.tencent.tauth.UiError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -92,6 +97,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        user = new User();
     }
 
     @Override
@@ -104,8 +110,25 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         if(!logined) {
             tvNickname.setText("点击登录");
         }
-        else {
-            tvNickname.setText("用户已登录");
+        else {//用户已经登陆过，采用本地的用户资料，包括头像，昵称等
+            user = getLocalUserInfo();
+            if(user != null)
+                tvNickname.setText(user.getNickname());
+            else
+                tvNickname.setText("用户已登录");
+            //可以进一步换成getBitmapFromName(...);
+            try {
+                FileInputStream input = getContext().openFileInput(user.getImgname());
+                byte[] buffer = new byte[1024*100];
+                input.read(buffer);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+                userImage.setImageBitmap(bitmap);
+                input.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         //创建mTencent实例，作为QQ登录的事务代理
         if (mTencent == null)
@@ -173,11 +196,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     }
 
     private void loadLoginState() {
-        user = new User();
-        JSONObject jsonObject = PreferenceUtils.getLogPref(getContext());
+        JSONObject jsonObject = PreferenceUtils.readUserInfo(getContext());
         try {
             logined = jsonObject.getBoolean("logined");
-            user.setUserid(jsonObject.getString("userId"));
+            user = (User) jsonObject.get("user");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -301,8 +323,8 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         } else {
             tvNickname.setText(R.string.login);
             userImage.setImageResource(R.drawable.bilibili);
-//            tvNickname.setVisibility(android.view.View.GONE);
-//            userImage.setVisibility(android.view.View.GONE);
+            /*tvNickname.setVisibility(android.view.View.GONE);
+            userImage.setVisibility(android.view.View.GONE);*/
         }
     }
 
@@ -310,12 +332,24 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void handleMessage(Message msg) {
+            //如果不是首次登录，则从本地读取用户状态
+            if(!isFirstLogin()) {
+                user = getLocalUserInfo();
+                tvNickname.setText(user.getNickname());
+                userImage.setImageBitmap(getBitmapFromName(user.getImgname(), 1024*100));
+                return;
+            }
+            //如果是首次登录，则更新界面上的头像，昵称，签名，并更新根本地的用户信息
             if (msg.what == 0) {
                 JSONObject response = (JSONObject) msg.obj;
                 if (response.has("nickname")) {
                     try {
                         tvNickname.setVisibility(android.view.View.VISIBLE);
                         tvNickname.setText(response.getString("nickname"));
+                        if(user == null)
+                            user = new User();
+                        user.setNickname(response.getString("nickname"));
+                        user.setUserid(mTencent.getOpenId());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -324,7 +358,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 Bitmap bitmap = (Bitmap)msg.obj;
                 userImage.setImageBitmap(bitmap);
                 userImage.setVisibility(android.view.View.VISIBLE);
+                if(user == null)
+                    user = new User();
+                user.setImgname("userPic.png");
             }
+            PreferenceUtils.writeUserInfo(getContext(), true, user);
         }
 
     };
@@ -398,5 +436,37 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    //向服务器查询用户是否首次登录系统
+    private boolean isFirstLogin() {
+        return true;
+    }
+
+    private User getLocalUserInfo() {//从本地的文件中获得User对象
+        User user = null;
+        JSONObject jsonObject = PreferenceUtils.readUserInfo(getContext());
+        try {
+            user = (User) jsonObject.get("user");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    private Bitmap getBitmapFromName(String name, int size) {
+        Bitmap bitmap = null;
+        try {
+            FileInputStream input = getContext().openFileInput(name);
+            byte[] buffer = new byte[size];
+            input.read(buffer);
+            bitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+            input.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }

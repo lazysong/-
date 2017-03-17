@@ -2,6 +2,8 @@ package com.lazysong.gojob.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,10 +23,15 @@ import com.lazysong.gojob.AccountActivity;
 import com.lazysong.gojob.QQLoginActivity;
 import com.lazysong.gojob.QueryActivity;
 import com.lazysong.gojob.R;
+import com.lazysong.gojob.com.lazysong.gojob.beans.User;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 
 import org.json.JSONObject;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,6 +58,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private Button buttonToAccount;
     private int position;
     private EditText editTextLimit;
+    private ImageView usrPic;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -99,6 +108,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         buttonQuery.setOnClickListener(this);
         buttonToAccount = (Button)view.findViewById(R.id.btnToAccount);
         buttonToAccount.setOnClickListener(this);
+        usrPic = (ImageView) view.findViewById(R.id.userPic);
+        Bitmap bitmap = null;
+        try {
+            FileInputStream inputStream = getContext().openFileInput("userPic.png");
+            byte[] buffer = new byte[1024*1000];
+            inputStream.read(buffer);
+            bitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+            usrPic.setImageBitmap(bitmap);
+            inputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return view;
     }
