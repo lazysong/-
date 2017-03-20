@@ -23,6 +23,7 @@ import com.lazysong.gojob.AccountActivity;
 import com.lazysong.gojob.QQLoginActivity;
 import com.lazysong.gojob.QueryActivity;
 import com.lazysong.gojob.R;
+import com.lazysong.gojob.ServerInfoManager;
 import com.lazysong.gojob.com.lazysong.gojob.beans.User;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -59,6 +60,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private int position;
     private EditText editTextLimit;
     private ImageView usrPic;
+    private Button buttonUpload;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -108,7 +110,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         buttonQuery.setOnClickListener(this);
         buttonToAccount = (Button)view.findViewById(R.id.btnToAccount);
         buttonToAccount.setOnClickListener(this);
-        usrPic = (ImageView) view.findViewById(R.id.userPic);
+        /*usrPic = (ImageView) view.findViewById(R.id.userPic);
         Bitmap bitmap = null;
         try {
             FileInputStream inputStream = getContext().openFileInput("userPic.png");
@@ -121,7 +123,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+        buttonUpload = (Button) view.findViewById(R.id.uploadData);
+        buttonUpload.setOnClickListener(this);
 
         return view;
     }

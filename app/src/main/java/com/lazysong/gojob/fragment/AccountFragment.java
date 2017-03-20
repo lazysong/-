@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,10 +21,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lazysong.gojob.CheckUserInfoActivity;
 import com.lazysong.gojob.EditUserInfoActivity;
+import com.lazysong.gojob.LocalInfoManager;
 import com.lazysong.gojob.MainActivity;
 import com.lazysong.gojob.PreferenceUtils;
 import com.lazysong.gojob.R;
+import com.lazysong.gojob.ServerInfoManager;
 import com.lazysong.gojob.SettingsActivity;
 import com.lazysong.gojob.Util;
 import com.lazysong.gojob.com.lazysong.gojob.beans.User;
@@ -65,9 +69,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout layoutUserInfo;
     private TextView tvNickname;
     private ImageView userImage;
+    private TextView sign;
     private RelativeLayout layoutSettings;
     private static Tencent mTencent;
     private UserInfo mInfo;
+    private LocalInfoManager localManager;
+    private ServerInfoManager serverManger;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -98,6 +105,9 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         user = new User();
+        user.initUser();
+        localManager = new LocalInfoManager(getContext());
+        serverManger = new ServerInfoManager(getContext());
     }
 
     @Override
@@ -105,36 +115,33 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        loadLoginState();
         initViews(view);
-        if(!logined) {
-            tvNickname.setText("点击登录");
-        }
-        else {//用户已经登陆过，采用本地的用户资料，包括头像，昵称等
-            user = getLocalUserInfo();
-            if(user != null)
-                tvNickname.setText(user.getNickname());
-            else
-                tvNickname.setText("用户已登录");
-            //可以进一步换成getBitmapFromName(...);
-            try {
-                FileInputStream input = getContext().openFileInput(user.getImgname());
-                byte[] buffer = new byte[1024*100];
-                input.read(buffer);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-                userImage.setImageBitmap(bitmap);
-                input.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
+        loadLoginState();
+        //如果已经登录过，则加载本地保存的User信息
+        if (logined)
+            loadUserInfo();
+        setUiData();
+
         //创建mTencent实例，作为QQ登录的事务代理
         if (mTencent == null)
             mTencent = Tencent.createInstance(MainActivity.appId, getContext());
         initListener();
         return view;
+    }
+
+    private void setUiData() {
+        if(!logined) {
+            tvNickname.setText("点击登录");
+            sign.setText("未设置");
+            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.bilibili);
+            userImage.setImageBitmap(bitmap);
+            return;
+        }
+        if(user.getImg() != null)
+            userImage.setImageBitmap(user.getImg());
+        tvNickname.setText(user.getNickname());
+        sign.setText(user.getSign());
     }
 
     //对布局控件进行初始化
@@ -143,6 +150,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         layoutUserInfo = (RelativeLayout) view.findViewById(R.id.layoutUserInfo);
         userImage = (ImageView) view.findViewById(R.id.imgUser);
         layoutSettings = (RelativeLayout) view.findViewById(R.id.layoutSettings);
+        sign = (TextView) view.findViewById(R.id.tvsign);
     }
 
     public void onButtonPressed(Uri uri) {
@@ -196,14 +204,23 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     }
 
     private void loadLoginState() {
-        JSONObject jsonObject = PreferenceUtils.readUserInfo(getContext());
+        JSONObject jsonObject = localManager.getLogPref();
         try {
             logined = jsonObject.getBoolean("logined");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadUserInfo() {
+        JSONObject jsonObject = localManager.getUserInfo();
+        try {
             user = (User) jsonObject.get("user");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
 
     //为控件设置监听器
     private void initListener() {
@@ -215,7 +232,8 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 else {
                     //跳转到编辑用户信息界面
                     Intent intent = new Intent();
-                    intent.setClass(getContext(), EditUserInfoActivity.class);
+                    intent.setClass(getContext(), CheckUserInfoActivity.class);
+                    intent.putExtra("user", user);
                     startActivity(intent);
                 }
             }
@@ -223,41 +241,28 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         layoutSettings.setOnClickListener(this);
     }
 
-    //执行通过QQ登录的操作
     private void QQLogin() {
-        JSONObject jsonObject = PreferenceUtils.getLogPref(getContext());
-        try {
-            logined = jsonObject.getBoolean("logined");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         if (!mTencent.isSessionValid()) {
             mTencent.login(this, "all", loginListener);
             logined = true;
-            PreferenceUtils.setLoginPref(getContext(), true,mTencent.getOpenId());
         } else {
             if (!logined) {
                 mTencent.login(this, "all", loginListener);
                 logined = true;
-                PreferenceUtils.setLoginPref(getContext(), true,mTencent.getOpenId());
             }
             else {
                 mTencent.logout(getContext());
                 logined = false;
-                PreferenceUtils.setLoginPref(getContext(), false, null);
             }
-            updateUserInfo();
-            updateLoginButton();
         }
+
     }
 
     IUiListener loginListener = new BaseUiListener() {
         @Override
         protected void doComplete(JSONObject values) {
             initOpenidAndToken(values);
-            updateUserInfo();
-            PreferenceUtils.setLoginPref(getContext(), true, mTencent.getOpenId());
-            updateLoginButton();
+            onResponseGot();
         }
     };
 
@@ -277,7 +282,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void updateUserInfo() {
+    private void onResponseGot() {
         if (mTencent != null && mTencent.isSessionValid()) {
             IUiListener listener = new IUiListener() {
                 @Override
@@ -323,8 +328,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         } else {
             tvNickname.setText(R.string.login);
             userImage.setImageResource(R.drawable.bilibili);
-            /*tvNickname.setVisibility(android.view.View.GONE);
-            userImage.setVisibility(android.view.View.GONE);*/
         }
     }
 
@@ -332,54 +335,41 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void handleMessage(Message msg) {
-            //如果不是首次登录，则从本地读取用户状态
-            if(!isFirstLogin()) {
-                user = getLocalUserInfo();
-                tvNickname.setText(user.getNickname());
-                userImage.setImageBitmap(getBitmapFromName(user.getImgname(), 1024*100));
-                return;
-            }
-            //如果是首次登录，则更新界面上的头像，昵称，签名，并更新根本地的用户信息
-            if (msg.what == 0) {
-                JSONObject response = (JSONObject) msg.obj;
-                if (response.has("nickname")) {
-                    try {
-                        tvNickname.setVisibility(android.view.View.VISIBLE);
-                        tvNickname.setText(response.getString("nickname"));
-                        if(user == null)
-                            user = new User();
-                        user.setNickname(response.getString("nickname"));
-                        user.setUserid(mTencent.getOpenId());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+            user.setUserid(mTencent.getOpenId());
+
+            //如果不是首次登录，则从服务器下载用户数据
+            if (serverManger.userExists(user.getUserid())) {
+                try {
+                    user = (User) serverManger.getUserInfo(user.getUserid()).get("user");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }else if(msg.what == 1){
-                Bitmap bitmap = (Bitmap)msg.obj;
-                userImage.setImageBitmap(bitmap);
-                userImage.setVisibility(android.view.View.VISIBLE);
-                if(user == null)
-                    user = new User();
-                user.setImgname("userPic.png");
-            }
-            PreferenceUtils.writeUserInfo(getContext(), true, user);
-        }
-
-    };
-
-    private void updateLoginButton() {
-        if (mTencent != null && mTencent.isSessionValid()) {
-            if (!logined) {
-                tvNickname.setText("登录");
             } else {
-//                btnQQLogin.setTextColor(Color.RED);
-//                btnQQLogin.setText("退出帐号");
+                if (msg.what == 0) { //如果是首次登录，则更新界面上的头像，昵称，签名，并更新根本地的用户信息
+                    JSONObject response = (JSONObject) msg.obj;
+                    if (response.has("nickname")) {
+                        try {
+                            user.setNickname(response.getString("nickname"));
+                            user.setUserid(mTencent.getOpenId());
+                            tvNickname.setText(user.getNickname());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else if (msg.what == 1) {
+                    Bitmap bitmap = (Bitmap) msg.obj;
+                    user.setImgName(mTencent.getOpenId());
+                    user.setImg(bitmap);
+                    userImage.setImageBitmap(bitmap);
+                }
+                if(!hasMessages(0) && !hasMessages(1)) {
+                    serverManger.saveUserInfo(user);
+                }
             }
+            localManager.setLogin(logined);
+            localManager.setUser(user);
         }
-        else {
-            tvNickname.setText("登录");
-        }
-    }
+    };
 
     private class BaseUiListener implements IUiListener {
 
@@ -394,9 +384,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 Util.showResultDialog(getContext(), "返回为空", "登录失败");
                 return;
             }
-            Util.showResultDialog(getContext(), response.toString(), "登录成功");
-            /*// 有奖分享处理
-            handlePrizeShare();*/
+//            Util.showResultDialog(getContext(), response.toString(), "登录成功");
             doComplete((JSONObject)response);
         }
 
@@ -430,43 +418,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getContext(), "reslutCode == RESULT_LOGOUT", Toast.LENGTH_SHORT).show();
             mTencent.logout(getContext());
             logined = false;
-            PreferenceUtils.setLoginPref(getContext(), false, null);
-//            updateLoginButton();
-            updateUserInfo();
+            localManager.setLogin(logined);
+            setUiData();
         }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    //向服务器查询用户是否首次登录系统
-    private boolean isFirstLogin() {
-        return true;
-    }
-
-    private User getLocalUserInfo() {//从本地的文件中获得User对象
-        User user = null;
-        JSONObject jsonObject = PreferenceUtils.readUserInfo(getContext());
-        try {
-            user = (User) jsonObject.get("user");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return user;
-    }
-
-    private Bitmap getBitmapFromName(String name, int size) {
-        Bitmap bitmap = null;
-        try {
-            FileInputStream input = getContext().openFileInput(name);
-            byte[] buffer = new byte[size];
-            input.read(buffer);
-            bitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-            input.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
-    }
 }

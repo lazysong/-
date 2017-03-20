@@ -2,6 +2,8 @@ package com.lazysong.gojob;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -13,6 +15,9 @@ import com.lazysong.gojob.com.lazysong.gojob.beans.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -58,7 +63,17 @@ public class PreferenceUtils {
             editor.putBoolean("logined", true);
             editor.putString("userId", user.getUserid());
             editor.putString("nickname", user.getNickname());
-            editor.putString("imgName", user.getImgname());
+            try {
+                FileInputStream input = context.openFileInput(user.getImgName());
+                byte[] buffer = new byte[1024*100];
+                input.read(buffer);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+                input.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             editor.putString("birthday", user.getBirthday().toString());
             editor.putString("sex", user.getSex() + "");
             editor.putString("sign", user.getSign());
@@ -76,7 +91,7 @@ public class PreferenceUtils {
         User user = new User();
         user.setUserid(sp.getString("userId", "unknown"));
         user.setNickname(sp.getString("nickname", "unknown"));
-        user.setImgname(sp.getString("imgName", "userPic"));
+        user.setImgName(sp.getString("imgName", "userPic"));
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             user.setBirthday(format.parse(sp.getString("birthday", "unknown")));

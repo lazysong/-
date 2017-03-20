@@ -1,238 +1,243 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="@color/ColorFragmetBackgroundLight"
-android:orientation="vertical">
-
-
-<RelativeLayout
-    android:id="@+id/layoutUserInfo"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="6dp"
-    android:background="@drawable/set_bar">
-
-    <ImageView
-        android:id="@+id/imgUser"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bilibili"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="12dp"
-        android:layout_toRightOf="@id/imgUser"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvNickname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="立二拆三"
-            android:textColor="@color/ColorTextGray"
-            android:textSize="@dimen/text_account_username" />
-
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="如果你无法简洁的表达你的想法，那只能说明你还不够了解它"
-            android:textColor="@color/ColorTextLightGray"
-            android:textSize="@dimen/text_account_sign" />
-    </LinearLayout>
-
-</RelativeLayout>
-
-<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="10dp">
+    android:background="@color/ColorFragmetBackgroundLight"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/set_bar">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/layoutUserInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="?android:attr/selectableItemBackground">
 
-            <RelativeLayout
-                android:id="@+id/layoutMark"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/height_listview_account"
-                android:background="@drawable/set_bar"
-                android:paddingLeft="10dp"
-                android:layout_marginBottom="2dp">
+            <ImageView
+                android:id="@+id/imgUser"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bilibili" />
 
-                <ImageView
-                    android:id="@+id/imgMark"
-                    android:layout_width="@dimen/size_listview_icon_account"
-                    android:layout_height="@dimen/size_listview_icon_account"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/ic_activity_want_to"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="12dp"
-                    android:layout_toRightOf="@id/imgMark"
-                    android:text="我的收藏"
-                    android:textColor="@color/ColorTextGray" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/layoutWatch"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/height_listview_account"
-                android:background="@drawable/set_bar"
-                android:paddingLeft="10dp"
-                android:layout_marginBottom="2dp">
-
-                <ImageView
-                    android:id="@+id/imgWatch"
-                    android:layout_width="@dimen/size_listview_icon_account"
-                    android:layout_height="@dimen/size_listview_icon_account"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/ic_activity_has_join" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="12dp"
+                android:layout_toRightOf="@id/imgUser"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvNickname"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="12dp"
-                    android:layout_toRightOf="@id/imgWatch"
-                    android:text="我的关注"
-                    android:textColor="@color/ColorTextGray" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/layoutHistory"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/height_listview_account"
-                android:background="@drawable/set_bar"
-                android:paddingLeft="10dp"
-                android:layout_marginBottom="2dp">
-
-                <ImageView
-                    android:id="@+id/imgHistory"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/ic_activity_has_join" />
+                    android:text="立二拆三"
+                    android:textColor="@color/ColorTextGray"
+                    android:textSize="@dimen/text_account_username" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvsign"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="12dp"
-                    android:layout_toRightOf="@id/imgHistory"
-                    android:text="浏览记录"
-                    android:textColor="@color/ColorTextGray" />
-            </RelativeLayout>
+                    android:layout_marginTop="4dp"
+                    android:text="如果你无法简洁的表达你的想法，那只能说明你还不够了解它"
+                    android:textColor="@color/ColorTextLightGray"
+                    android:textSize="@dimen/text_account_sign" />
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:id="@+id/layoutWillings"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/height_listview_account"
-                android:background="@drawable/set_bar"
-                android:layout_marginBottom="2dp"
-                android:paddingLeft="10dp">
-
-                <ImageView
-                    android:id="@+id/imgWillings"
-                    android:layout_width="@dimen/size_listview_icon_account"
-                    android:layout_height="@dimen/size_listview_icon_account"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/ic_activity_has_join" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="12dp"
-                    android:layout_toRightOf="@id/imgWillings"
-                    android:text="求职意向"
-                    android:textColor="@color/ColorTextGray" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/layoutResume"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/height_listview_account"
-                android:background="@drawable/set_bar"
-                android:layout_marginBottom="2dp"
-                android:paddingLeft="10dp">
-
-                <ImageView
-                    android:id="@+id/imgResume"
-                    android:layout_width="@dimen/size_listview_icon_account"
-                    android:layout_height="@dimen/size_listview_icon_account"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/ic_activity_has_join" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="12dp"
-                    android:layout_toRightOf="@id/imgResume"
-                    android:text="个人简历"
-                    android:textColor="@color/ColorTextGray" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/layoutSettings"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/height_listview_account"
-                android:background="@drawable/set_bar"
-                android:paddingLeft="10dp">
-
-                <ImageView
-                    android:id="@+id/imgSettings"
-                    android:layout_width="@dimen/size_listview_icon_account"
-                    android:layout_height="@dimen/size_listview_icon_account"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/ic_activity_has_join" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="12dp"
-                    android:layout_toRightOf="@id/imgSettings"
-                    android:text="设置"
-                    android:textColor="@color/ColorTextGray" />
-            </RelativeLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
 
-</ScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/layoutMark"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_listview_account"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/set_bar"
+                    android:paddingLeft="10dp">
+
+                    <ImageView
+                        android:id="@+id/imgMark"
+                        android:layout_width="@dimen/size_listview_icon_account"
+                        android:layout_height="@dimen/size_listview_icon_account"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_activity_want_to" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:layout_toRightOf="@id/imgMark"
+                        android:text="我的收藏"
+                        android:textColor="@color/ColorTextGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutWatch"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_listview_account"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/set_bar"
+                    android:paddingLeft="10dp">
+
+                    <ImageView
+                        android:id="@+id/imgWatch"
+                        android:layout_width="@dimen/size_listview_icon_account"
+                        android:layout_height="@dimen/size_listview_icon_account"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_activity_has_join" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:layout_toRightOf="@id/imgWatch"
+                        android:text="我的关注"
+                        android:textColor="@color/ColorTextGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutHistory"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_listview_account"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/set_bar"
+                    android:paddingLeft="10dp">
+
+                    <ImageView
+                        android:id="@+id/imgHistory"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_activity_has_join" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:layout_toRightOf="@id/imgHistory"
+                        android:text="浏览记录"
+                        android:textColor="@color/ColorTextGray" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/layoutWillings"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_listview_account"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/set_bar"
+                    android:paddingLeft="10dp">
+
+                    <ImageView
+                        android:id="@+id/imgWillings"
+                        android:layout_width="@dimen/size_listview_icon_account"
+                        android:layout_height="@dimen/size_listview_icon_account"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_activity_has_join" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:layout_toRightOf="@id/imgWillings"
+                        android:text="求职意向"
+                        android:textColor="@color/ColorTextGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutResume"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_listview_account"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/set_bar"
+                    android:paddingLeft="10dp">
+
+                    <ImageView
+                        android:id="@+id/imgResume"
+                        android:layout_width="@dimen/size_listview_icon_account"
+                        android:layout_height="@dimen/size_listview_icon_account"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_activity_has_join" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:layout_toRightOf="@id/imgResume"
+                        android:text="个人简历"
+                        android:textColor="@color/ColorTextGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_listview_account"
+                    android:background="@drawable/set_bar"
+                    android:paddingLeft="10dp">
+
+                    <ImageView
+                        android:id="@+id/imgSettings"
+                        android:layout_width="@dimen/size_listview_icon_account"
+                        android:layout_height="@dimen/size_listview_icon_account"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_activity_has_join" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:layout_toRightOf="@id/imgSettings"
+                        android:text="设置"
+                        android:textColor="@color/ColorTextGray" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
 
 
 </LinearLayout>

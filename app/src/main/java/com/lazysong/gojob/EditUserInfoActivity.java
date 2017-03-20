@@ -2,6 +2,10 @@ package com.lazysong.gojob;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.lazysong.gojob.com.lazysong.gojob.beans.User;
 
 public class EditUserInfoActivity extends AppCompatActivity {
 
@@ -10,4 +14,5 @@ public class EditUserInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user_info);
     }
+
 }

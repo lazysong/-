@@ -1,6 +1,7 @@
 package com.lazysong.gojob;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,6 +108,7 @@ public class QueryActivity extends AppCompatActivity {
         //HttpGet httpGet = new HttpGet("http://192.168.196.153:8080/Test/a.scaction?limit=" + limit);
         //建立一个NameValuePair数组，用于存储欲传送的参数
         List<Map<Object, Object>> params=new ArrayList<Map<Object, Object>>();
+
 //        params.add(new BasicNameValuePair("task","check_all"));
         //添加参数
         try {
@@ -118,7 +121,6 @@ public class QueryActivity extends AppCompatActivity {
         HttpClient httpClient = new DefaultHttpClient();
 
         // 下面使用Http客户端发送请求，并获取响应内容
-
         InputStream inputStream = null;
 
         // 发送请求并获得响应对象

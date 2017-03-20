@@ -45,5 +45,10 @@
         android:id="@+id/userPic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/uploadData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="上传文件到服务器"/>
 
 </LinearLayout>
