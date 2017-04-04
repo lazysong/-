@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.lazysong.gojob.CatUserActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="查询用户信息"
+        android:id="@+id/btnCatUser"
+        android:layout_below="@+id/textUserId"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textUserId"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:hint="请输入用户id" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="用户昵称"
+        android:id="@+id/tvNickname"
+        android:layout_below="@+id/btnCatUser"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="用户性别"
+        android:id="@+id/tvSex"
+        android:layout_below="@+id/tvNickname"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="出生年月"
+        android:id="@+id/tvBirthday"
+        android:layout_below="@+id/tvSex"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageUser"
+        android:layout_below="@+id/tvBirthday"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="修改用户信息"
+        android:id="@+id/btnModifyUser"
+        android:layout_alignTop="@+id/textUserId"
+        android:layout_toRightOf="@+id/btnCatUser"
+        android:layout_toEndOf="@+id/btnCatUser" />
+
+</RelativeLayout>

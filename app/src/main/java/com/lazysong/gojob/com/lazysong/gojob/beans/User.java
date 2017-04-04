@@ -13,28 +13,37 @@ import java.util.Date;
 /**
  * Created by lazysong on 2017/3/1.
  */
-public class User implements Parcelable {
-    private String userid;
-    private String nickname;
-    private Bitmap img;
-    private String imgName;
-    private int sex;
-    private Date birthday;
-    private String sign;
+public class User extends BaseUser implements Parcelable {
+    protected Bitmap img;
 
     public User() {
     }
 
     public User(String userid, String nickname, Bitmap img, String imgName, int sex, Date birthday, String sign) {
-        this.userid = userid;
-        this.nickname = nickname;
+        super(userid, nickname, imgName, sex, birthday, sign);
         this.img = img;
-        this.imgName = imgName;
-        this.sex = sex;
-        this.birthday = birthday;
-        this.sign = sign;
     }
 
+    public User(BaseUser baseUser, Bitmap bitmap) {
+        userid = baseUser.getUserid();
+        nickname = baseUser.getNickname();
+        imgName = baseUser.getImgName();
+        sex = baseUser.getSex();
+        birthday = baseUser.getBirthday();
+        sign = baseUser.getSign();
+        img = bitmap;
+    }
+
+    public BaseUser getBaseuser() {
+        BaseUser baseUser = new BaseUser();
+        baseUser.setUserid(userid);
+        baseUser.setNickname(nickname);
+        baseUser.setImgName(imgName);
+        baseUser.setSex(sex);
+        baseUser.setBirthday(birthday);
+        baseUser.setSign(sign);
+        return baseUser;
+    }
     protected User(Parcel in) {
         userid = in.readString();
         nickname = in.readString();
@@ -62,60 +71,12 @@ public class User implements Parcelable {
         }
     };
 
-    public String getImgName() {
-        return imgName;
-    }
-
-    public void setImgName(String imgName) {
-        this.imgName = imgName;
-    }
-
-    public String getSign() {
-        return sign;
-    }
-
-    public void setSign(String sign) {
-        this.sign = sign;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getUserid() {
-        return userid;
-    }
-
-    public void setUserid(String userid) {
-        this.userid = userid;
-    }
-
     public Bitmap getImg() {
         return img;
     }
 
     public void setImg(Bitmap img) {
         this.img = img;
-    }
-
-    public int getSex() {
-        return sex;
-    }
-
-    public void setSex(int sex) {
-        this.sex = sex;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
     }
 
     public void initUser() {
@@ -141,4 +102,5 @@ public class User implements Parcelable {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         dest.writeString(format.format(birthday));
     }
+
 }

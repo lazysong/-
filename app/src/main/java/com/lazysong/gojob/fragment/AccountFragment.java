@@ -233,7 +233,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     //跳转到编辑用户信息界面
                     Intent intent = new Intent();
                     intent.setClass(getContext(), CheckUserInfoActivity.class);
-                    intent.putExtra("user", user);
+                    intent.putExtra("user", (Parcelable) user);
                     startActivity(intent);
                 }
             }

@@ -20,10 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lazysong.gojob.AccountActivity;
+import com.lazysong.gojob.NetworkConnActivity;
 import com.lazysong.gojob.QQLoginActivity;
 import com.lazysong.gojob.QueryActivity;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.ServerInfoManager;
+import com.lazysong.gojob.UserManageActivity;
 import com.lazysong.gojob.com.lazysong.gojob.beans.User;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -33,6 +35,9 @@ import org.json.JSONObject;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +66,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private EditText editTextLimit;
     private ImageView usrPic;
     private Button buttonUpload;
+    private Button testNetworkConnection;
+    private Button userInfoManage;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -103,6 +110,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         textView = (TextView) view.findViewById(R.id.textview);
         textView.setText("Hello this is fragment " + position);
         editTextLimit = (EditText) view.findViewById(R.id.editTextLimit);
+        testNetworkConnection = (Button)view.findViewById(R.id.testNetworkConnection);
+        userInfoManage = (Button)view.findViewById(R.id.userInfoManage);
 
         buttonLogin = (Button) view.findViewById(R.id.login);
         buttonLogin.setOnClickListener(this);
@@ -110,6 +119,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         buttonQuery.setOnClickListener(this);
         buttonToAccount = (Button)view.findViewById(R.id.btnToAccount);
         buttonToAccount.setOnClickListener(this);
+        testNetworkConnection.setOnClickListener(this);
+        userInfoManage.setOnClickListener(this);
         /*usrPic = (ImageView) view.findViewById(R.id.userPic);
         Bitmap bitmap = null;
         try {
@@ -172,6 +183,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.btnToAccount:
                 intent.setClass(getContext(), AccountActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.testNetworkConnection:
+                intent.setClass(getContext(), NetworkConnActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.userInfoManage:
+                intent.setClass(getContext(), UserManageActivity.class);
                 startActivity(intent);
                 break;
             default:

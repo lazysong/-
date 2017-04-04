@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -13,7 +14,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,7 +45,11 @@
         <activity android:name=".AccountActivity" />
         <activity android:name=".EditUserInfoActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".CheckUserInfoActivity"></activity>
+        <activity android:name=".CheckUserInfoActivity" />
+        <activity android:name=".NetworkConnActivity" />
+        <activity android:name=".UserManageActivity" />
+        <activity android:name=".CatUserActivity" />
+        <activity android:name=".ModifyUserActivity"></activity>
     </application>
 
 </manifest>
