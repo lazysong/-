@@ -1,26 +1,49 @@
 package com.lazysong.gojob;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.lazysong.gojob.com.lazysong.gojob.beans.BaseUser;
 import com.lazysong.gojob.com.lazysong.gojob.beans.User;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ModifyUserActivity extends AppCompatActivity implements View.OnClickListener {
+public class ModifyUserActivity extends AppCompatActivity implements View.OnClickListener, UrlConstructor {
     private TextView tvUserid;
     private Button btnConfirm;
     private Button btnCancle;
@@ -31,6 +54,7 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
     private ImageView imgUser;
     private BaseUser baseUser;
     private Bitmap img;
+    private final static String BASEURL = "http://192.168.43.192:8080/Test";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +79,7 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
         imgUser = (ImageView) findViewById(R.id.img_edit);
         btnConfirm.setOnClickListener(this);
         btnCancle.setOnClickListener(this);
+        imgUser.setOnClickListener(this);
 
         if(baseUser != null) {
             tvUserid.setText(baseUser.getUserid());
@@ -73,7 +98,10 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
             case R.id.confirm_edit:
                 baseUser = getUserFromView();
                 if (baseUser != null) {
-                    uploadUserInfo(baseUser, img);
+//                    uploadUserInfo(baseUser, img);
+                    UploadUserInfoTask task = new UploadUserInfoTask();
+                    User user = new User(baseUser, img);
+                    task.execute(user);
                     ByteArrayOutputStream bao = new ByteArrayOutputStream();
                     img.compress(Bitmap.CompressFormat.PNG, 100, bao);
                     byte[] imgBytes= bao.toByteArray();
@@ -91,10 +119,6 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void uploadUserInfo(BaseUser baseUser, Bitmap img) {
-
-    }
-
     private User getUserFromView() {
         User user = new User();
         user.setNickname(edtNickname.getText().toString());
@@ -109,5 +133,42 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
         user.setSex(Integer.parseInt(edtSex.getText().toString()));
 //        user.setImg(imgUser.getDrawingCache());
         return user;
+    }
+
+    private class UploadUserInfoTask extends AsyncTask<User, Void, Void> {
+
+        @Override
+        protected Void doInBackground(User... users) {
+            User user =users [0];
+            UploadUserRequestData data = new UploadUserRequestData(RequestCode.UPLOAD_USER, user);
+            String urlString = constructUrlString(BASEURL, data);
+            try {
+                uploadUser(urlString, data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private boolean uploadUser(String urlString, BaseRequestData data) throws IOException {
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        User user = ((UploadUserRequestData)data).getUser();
+        BaseUser baseUser = user.getBaseuser();
+        Gson gson = new Gson();
+        String baseUserString = gson.toJson(baseUser);
+        conn.setRequestProperty("baseUser", baseUserString);
+        conn.setDoOutput(true);
+        OutputStream os = conn.getOutputStream();
+        Bitmap img = user.getImg();
+        img.compress(Bitmap.CompressFormat.PNG, 100, os);
+        return true;
+    }
+
+    @Override
+    public String constructUrlString(String baseUrlString, BaseRequestData data) {
+        String urlString = baseUrlString + "?requestCode=" + RequestCode.UPLOAD_USER;
+        return urlString;
     }
 }

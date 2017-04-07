@@ -26,7 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class CatUserActivity extends AppCompatActivity implements View.OnClickListener {
+public class CatUserActivity extends AppCompatActivity implements View.OnClickListener, UrlConstructor {
     private Button btnCatUser;
     private EditText editTextUserId;
     private TextView tvNickname;
@@ -60,6 +60,7 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
     public final static int MODIFY_USER_INFO = 1;
     public final static int MODIFY_SUCCESS = 2;
     public final static int MODIFY_CANCLE = 3;
+    public final static String BASE_URL_STR = "http://192.168.43.192:8080";
 
     @Override
     public void onClick(View v) {
@@ -67,7 +68,7 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
         switch (id) {
             case R.id.btnCatUser:
                 DownUserTask task = new DownUserTask();
-                task.execute("http://192.168.196.179:8080/Test/a.scaction", editTextUserId.getText().toString());
+                task.execute(BASE_URL_STR + "/Test/a.scaction", editTextUserId.getText().toString());
                 break;
             case R.id.btnModifyUser:
                 if (user != null) {
@@ -116,13 +117,13 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
             User user = null;
             try {
                 int requestCode = data.getRequestCode();
-                urlString = constructUrlString(urlString, requestCode, data);
+                urlString = constructUrlString(urlString, data);
                 input = downladUrl(urlString, data);
                 baseUser = readStreamUser(input);
                 input.close();
                 if(baseUser == null)
                     return null;
-                Bitmap bitmap = downloadImg("http://192.168.196.179:8080/Test/img/" + baseUser.getImgName());
+                Bitmap bitmap = downloadImg(BASE_URL_STR + "/img/" + baseUser.getImgName());
                 user = new User(baseUser, bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -166,41 +167,6 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
                 input.close();
         }
         return bitmap;
-    }
-
-    private class BaseRequestData {
-        private int requestCode;
-        public BaseRequestData() {
-
-        }
-        public BaseRequestData(int requestCode) {
-            this.requestCode = requestCode;
-        }
-
-        public int getRequestCode() {
-            return requestCode;
-        }
-
-        public void setRequestCode(int requestCode) {
-            this.requestCode = requestCode;
-        }
-    }
-
-    private class UserRequestData extends BaseRequestData {
-        private String userId;
-
-        public UserRequestData(int requestCode, String userId) {
-            super(requestCode);
-            this.userId = userId;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
     }
 
     private BaseUser readStreamUser(InputStream input) {
@@ -249,14 +215,11 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
         return conn.getInputStream();
     }
 
-    private String constructUrlString(String urlString, int requestCode, BaseRequestData data) {
-        urlString = urlString + "?requestCode=" + requestCode;
-        switch (requestCode) {
-            case RequestCode.CAT_USER:
-                urlString = urlString + "&userid=" + ((UserRequestData)data).getUserId();
-                return urlString;
-            default:
-        }
+    @Override
+    public String constructUrlString(String baseUrlString, BaseRequestData data) {
+        String urlString = baseUrlString +
+                "?requestCode=" + RequestCode.CAT_USER +
+                "&userid=" + ((UserRequestData)data).getUserId();
         return urlString;
     }
 }
