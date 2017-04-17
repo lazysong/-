@@ -60,7 +60,8 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
     public final static int MODIFY_USER_INFO = 1;
     public final static int MODIFY_SUCCESS = 2;
     public final static int MODIFY_CANCLE = 3;
-    public final static String BASE_URL_STR = "http://192.168.43.192:8080";
+//    public final static String BASE_URL_STR = "http://192.168.196.184:8080";//虚拟机地址
+    public final static String BASE_URL_STR = "http://192.168.18.112:8080";//本地地址
 
     @Override
     public void onClick(View v) {
@@ -134,10 +135,6 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(User user) {
             if(user != null && user.getUserid() != null) {
-                /*tvNickname.setText(user.getNickname());
-                tvSex.setText(user.getSex() + "");
-                tvBirthday.setText(user.getBirthday().getYear() + "年" + user.getBirthday().getMonth() + "月");
-                userImage.setImageBitmap(user.getImg());*/
                 CatUserActivity.this.user = user;
                 postViewData(user);
             }
@@ -210,7 +207,6 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
         conn.setReadTimeout(10000/*毫秒*/);
         conn.setConnectTimeout(15000/*毫秒*/);
         conn.setDoInput(true);
-//        conn.setRequestProperty("requestCode", data.getRequestCode() + "");
         conn.connect();
         return conn.getInputStream();
     }
