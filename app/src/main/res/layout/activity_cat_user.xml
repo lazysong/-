@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.lazysong.gojob.CatUserActivity">
+    tools:context=".view.activity.CatUserActivity">
 
     <Button
         android:layout_width="wrap_content"
@@ -47,6 +47,14 @@
         android:text="出生年月"
         android:id="@+id/tvBirthday"
         android:layout_below="@+id/tvSex"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="用户签名"
+        android:id="@+id/tvSign"
+        android:layout_below="@+id/imageUser"
         android:layout_centerHorizontal="true" />
 
     <ImageView
