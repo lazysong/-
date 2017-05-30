@@ -1,74 +1,19 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".view.fragment.HomeFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
-        android:background="@color/colorAccent"
-        android:textColor="@color/white"
-        android:textSize="@dimen/title_size" />
+    tools:context="com.lazysong.gojob.view.fragment.HomeFragment">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycleview_remd_post"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <Button
-                android:id="@+id/login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/login"
-                android:textSize="24sp"/>
+            android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/editTextLimit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="展示项数"/>
-            <Button
-                android:id="@+id/btnQuery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/query" />
-            <Button
-                android:id="@+id/btnToAccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/toAccount" />
-
-            <ImageView
-                android:id="@+id/userPic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/uploadData"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="上传文件到服务器"/>
-
-            <Button
-                android:id="@+id/testNetworkConnection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="网络连接测试"/>
-
-            <Button
-                android:id="@+id/userInfoManage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="管理用户信息"/>
-        </LinearLayout>
+        </android.support.v7.widget.RecyclerView>
     </ScrollView>
 
 
-</LinearLayout>
+</FrameLayout>

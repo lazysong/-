@@ -13,11 +13,14 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.view.fragment.AccountFragment;
 import com.lazysong.gojob.view.fragment.HomeFragment;
+import com.lazysong.gojob.view.fragment.HomeFragmentTest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener, HomeFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener,
+        HomeFragment.OnFragmentInteractionListener, HomeFragmentTest.OnFragmentInteractionListener,
+        AccountFragment.OnFragmentInteractionListener{
     private BottomNavigationBar bottomNavigationBar;
     private int position = 0;
     private Toolbar toolbar;
@@ -42,15 +45,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private void createFragmentList() {
         fragmentList = new ArrayList<Fragment>();
         fragmentList.add(0, new HomeFragment());
-        fragmentList.add(1, new HomeFragment());
-        fragmentList.add(2, new HomeFragment());
+        fragmentList.add(1, new HomeFragmentTest());
+        fragmentList.add(2, new HomeFragmentTest());
         fragmentList.add(3, new AccountFragment());
     }
 
     private void setToolBar() {
         toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
-        Toast.makeText(this, "setToolbarTitle() is called in setToolBar() position is " + position, Toast.LENGTH_SHORT).show();
         setToolbarTitle(position);
     }
 
@@ -83,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, currentFragment).commit();
         }
-        setToolbarTitle(position);
     }
 
     // 设置顶部栏的标题

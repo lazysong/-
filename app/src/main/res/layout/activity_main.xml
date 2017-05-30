@@ -23,7 +23,7 @@
 
     <!--  可以在布局文件中静态添加fragment  -->
     <!--<fragment
-        android:name="com.lazysong.gojob.view.fragment.HomeFragment"
+        android:name="com.lazysong.gojob.view.fragment.HomeFragmentTestTest"
         android:id="@+id/home_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>-->
