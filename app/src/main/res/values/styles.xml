@@ -8,4 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ActionBarTabText">
+        <item name="android:textSize">@dimen/text_size_tab_actionbar</item>
+    </style>
 </resources>

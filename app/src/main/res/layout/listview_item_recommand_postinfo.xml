@@ -8,7 +8,8 @@
     >
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/touch_bg">
         <ImageView
             android:id="@+id/imgCompanyLogo"
             android:layout_width="32dp"
@@ -79,9 +80,8 @@
             android:layout_height="28dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/chat_navigation_btn_medium"
-            android:layout_marginRight="10dp"
-            android:alpha="80"/>
+            android:src="@drawable/next"
+            android:layout_marginRight="10dp" />
 
     </RelativeLayout>
 

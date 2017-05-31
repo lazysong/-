@@ -28,7 +28,7 @@ public class AccountActivity extends AppCompatActivity implements AccountFragmen
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onChangeToolbarTitle(int data) {
 
     }
 }

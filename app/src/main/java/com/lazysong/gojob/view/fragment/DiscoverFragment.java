@@ -11,14 +11,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,18 +23,21 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.module.beans.PostInformation;
+import com.lazysong.gojob.view.activity.MainActivity;
 import com.lazysong.gojob.view.activity.PostInfoDetailActivity;
-import com.lazysong.gojob.view.activity.SearchActivity;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+import me.gujun.android.taggroup.TagGroup;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class HomeFragment extends Fragment {
+public class DiscoverFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -45,20 +45,18 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private ActionBar actionBar;
-    private RecyclerView recycleViewRemdPost;
-
-    private List<PostInformation> postInfoList;
-    private PostInformation postInfo;
-
     private OnFragmentInteractionListener mListener;
 
-    public HomeFragment() {
-        // Required empty public constructor
+    private TagGroup tagGroup;
+    private RecyclerView recyclerView;
+
+    private List<PostInformation> postInfoList;
+
+    public DiscoverFragment() {
     }
 
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
+    public static DiscoverFragment newInstance(String param1, String param2) {
+        DiscoverFragment fragment = new DiscoverFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -78,16 +76,18 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        recycleViewRemdPost = (RecyclerView) view.findViewById(R.id.recycleview_remd_post);
-        RequestRecommandTask task = new RequestRecommandTask("1");
+        View view = inflater.inflate(R.layout.fragment_discover, container, false);
+        tagGroup = (TagGroup) view.findViewById(R.id.tag_group);
+        tagGroup.setTags(new String[]{"最新发布", "最热职位", "内推职位"});
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycleviewDiscover);
+        DiscoverPostInfoTask task = new DiscoverPostInfoTask("1");
         task.execute();
         return view;
     }
 
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(int data) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onChangeToolbarTitle(data);
         }
     }
 
@@ -109,43 +109,18 @@ public class HomeFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void onChangeToolbarTitle(int data);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setShowHideAnimationEnabled(false);
-        actionBar.show();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(R.layout.actionbar_home);
-        EditText edtSearch = (EditText) actionBar.getCustomView().findViewById(R.id.search);
-        edtSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(getContext(), SearchActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    class MyRequest {
-
-    }
-    class MyResult {
-
-    }
-    class RequestRecommandTask extends AsyncTask<Void, Void, String> {
+    class DiscoverPostInfoTask extends AsyncTask<Void, Void, String> {
         private final String BASE_URL = "http://www.lazysong.cn:8080/Test";
         private final String userId;
         private final OkHttpClient client = new OkHttpClient();
 
-        public RequestRecommandTask(String userId) {
+        public DiscoverPostInfoTask(String userId) {
             this.userId = userId;
         }
+
         @Override
         protected String doInBackground(Void... params) {
             String urlStr = BASE_URL + "/Test/a.scaction?limit=10";
@@ -171,8 +146,8 @@ public class HomeFragment extends Fragment {
         protected void onPostExecute(String result) {
             Gson gson = new Gson();
             postInfoList = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
-            recycleViewRemdPost.setAdapter(new RecommandPostInfoAdapter());
-            recycleViewRemdPost.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerView.setAdapter(new PostInfoAdapter());
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             super.onPostExecute(result);
         }
     }
@@ -202,7 +177,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    class RecommandPostInfoAdapter extends RecyclerView.Adapter<ViewCache> {
+    class PostInfoAdapter extends RecyclerView.Adapter<ViewCache> {
 
         @Override
         public ViewCache onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -238,5 +213,11 @@ public class HomeFragment extends Fragment {
         public int getItemCount() {
             return postInfoList.size();
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        mListener.onChangeToolbarTitle(MainActivity.FRAGMENT_DISCOVER);
+        super.onActivityCreated(savedInstanceState);
     }
 }

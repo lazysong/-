@@ -14,6 +14,6 @@
     <dimen name="text_size_actionbar_left">14sp</dimen>
     <dimen name="text_size_tab_actionbar">18sp</dimen>
     <dimen name="img_size_tag">30dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin">18dp</dimen>
     <dimen name="toolbar_title_size">16sp</dimen>
 </resources>

@@ -3,24 +3,22 @@ package com.lazysong.gojob.view.activity;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.lazysong.gojob.R;
-import com.lazysong.gojob.view.fragment.AccountFragment;
-import com.lazysong.gojob.view.fragment.HomeFragment;
-import com.lazysong.gojob.view.fragment.HomeFragmentTest;
+import com.lazysong.gojob.view.fragment.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener,
-        HomeFragment.OnFragmentInteractionListener, HomeFragmentTest.OnFragmentInteractionListener,
-        AccountFragment.OnFragmentInteractionListener{
+        HomeFragment.OnFragmentInteractionListener, MessageFragment.OnFragmentInteractionListener,
+        DiscoverFragment.OnFragmentInteractionListener,AccountFragment.OnFragmentInteractionListener {
     private BottomNavigationBar bottomNavigationBar;
     private int position = 0;
     private Toolbar toolbar;
@@ -29,6 +27,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     public static String appId = "1106011236";
     public static int RESULT_LOGOUT = 1;
     public static int REQUEST_SETTINGS = 2;
+    public final static int FRAGMENT_HOME = 1;
+    public final static int FRAGMENT_DISCOVER = 2;
+    public final static int FRAGMENT_MESSAGE = 3;
+    public final static int FRAGMENT_ACCOUNT = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +47,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private void createFragmentList() {
         fragmentList = new ArrayList<Fragment>();
         fragmentList.add(0, new HomeFragment());
-        fragmentList.add(1, new HomeFragmentTest());
-        fragmentList.add(2, new HomeFragmentTest());
+        fragmentList.add(1, new DiscoverFragment());
+        fragmentList.add(2, new MessageFragment());
         fragmentList.add(3, new AccountFragment());
     }
 
@@ -117,6 +119,24 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     @Override
     public void onTabReselected(int position) {
 
+    }
+
+    @Override
+    public void onChangeToolbarTitle(int data) {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(false);
+        switch (data) {
+            case FRAGMENT_DISCOVER:
+                actionBar.setTitle("发现");
+                break;
+            case FRAGMENT_MESSAGE:
+                actionBar.setTitle("消息");
+                break;
+            case FRAGMENT_ACCOUNT:
+                actionBar.setTitle("账户");
+                break;
+        }
+        actionBar.setDisplayShowTitleEnabled(true);
     }
 
     @Override
