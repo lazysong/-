@@ -29,7 +29,7 @@ public class ResultCompanyAdapter extends RecyclerView.Adapter<PostInfoItem> {
     @Override
     public PostInfoItem onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View itemView = inflater.inflate(R.layout.listview_item_recommand_postinfo, parent, false);
+        View itemView = inflater.inflate(R.layout.listview_item_postinfo, parent, false);
         PostInfoItem viewCache = new PostInfoItem(itemView);
         return viewCache;
     }

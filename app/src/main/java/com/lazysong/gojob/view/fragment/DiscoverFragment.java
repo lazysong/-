@@ -2,18 +2,16 @@ package com.lazysong.gojob.view.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +23,7 @@ import com.lazysong.gojob.R;
 import com.lazysong.gojob.module.beans.PostInformation;
 import com.lazysong.gojob.view.activity.MainActivity;
 import com.lazysong.gojob.view.activity.PostInfoDetailActivity;
+import com.lazysong.gojob.view.activity.SelectTagActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,6 +48,7 @@ public class DiscoverFragment extends Fragment {
 
     private TagGroup tagGroup;
     private RecyclerView recyclerView;
+    private Button btnToSelectTag;
 
     private List<PostInformation> postInfoList;
 
@@ -80,15 +80,18 @@ public class DiscoverFragment extends Fragment {
         tagGroup = (TagGroup) view.findViewById(R.id.tag_group);
         tagGroup.setTags(new String[]{"最新发布", "最热职位", "内推职位"});
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleviewDiscover);
+        btnToSelectTag = (Button) view.findViewById(R.id.btnSelectTag);
+        btnToSelectTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getContext(), SelectTagActivity.class);
+                startActivity(intent);
+            }
+        });
         DiscoverPostInfoTask task = new DiscoverPostInfoTask("1");
         task.execute();
         return view;
-    }
-
-    public void onButtonPressed(int data) {
-        if (mListener != null) {
-            mListener.onChangeToolbarTitle(data);
-        }
     }
 
     @Override
@@ -182,7 +185,7 @@ public class DiscoverFragment extends Fragment {
         @Override
         public ViewCache onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            View itemView = inflater.inflate(R.layout.listview_item_recommand_postinfo, parent, false);
+            View itemView = inflater.inflate(R.layout.listview_item_postinfo, parent, false);
             ViewCache viewCache = new ViewCache(itemView);
             return viewCache;
         }

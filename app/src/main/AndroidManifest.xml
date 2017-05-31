@@ -52,7 +52,8 @@
         <activity android:name=".view.activity.CatUserActivity" />
         <activity android:name=".view.activity.ModifyUserActivity" />
         <activity android:name=".view.activity.PostInfoDetailActivity" />
-        <activity android:name=".view.activity.SearchActivity"></activity>
+        <activity android:name=".view.activity.SearchActivity" />
+        <activity android:name=".view.activity.SelectTagActivity"></activity>
     </application>
 
 </manifest>

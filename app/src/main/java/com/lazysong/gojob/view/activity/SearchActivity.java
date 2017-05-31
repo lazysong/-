@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -36,7 +37,7 @@ import java.util.List;
 public class SearchActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView txtTitle;
-    private Button btnSearch;
+    private ImageView imgBack;
     private EditText edtSearch;
 
     private List<View> viewContainer = new ArrayList<View>();
@@ -62,25 +63,30 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        txtTitle = (TextView) findViewById(R.id.titleToolbar);
-        txtTitle.setText("搜索");
+//        txtTitle = (TextView) findViewById(R.id.titleToolbar);
+//        txtTitle.setText("搜索");
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar_base);
+        /*toolbar = (Toolbar) findViewById(R.id.toolbar_base);
         toolbar.setNavigationIcon(R.drawable.pre);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SearchActivity.this.finish();
             }
-        });
+        });*/
 
-        btnSearch = (Button) findViewById(R.id.btnSearch);
+        //消除actionBar的显示/隐藏动画，并且隐藏actionBar
+//        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+//        actionBar.setShowHideAnimationEnabled(false);
+//        actionBar.hide();
+
+
         edtSearch = (EditText) findViewById(R.id.edtSearch);
-        btnSearch.setOnClickListener(new View.OnClickListener() {
+        imgBack = (ImageView) findViewById(R.id.imgBack);
+        imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String keyword = edtSearch.getText().toString();
-
+                SearchActivity.this.finish();
             }
         });
 

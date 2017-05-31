@@ -11,14 +11,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -207,7 +205,7 @@ public class HomeFragment extends Fragment {
         @Override
         public ViewCache onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            View itemView = inflater.inflate(R.layout.listview_item_recommand_postinfo, parent, false);
+            View itemView = inflater.inflate(R.layout.listview_item_postinfo, parent, false);
             ViewCache viewCache = new ViewCache(itemView);
             return viewCache;
         }
