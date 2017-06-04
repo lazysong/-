@@ -10,15 +10,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <me.gujun.android.taggroup.TagGroup
+        <co.lujun.androidtagview.TagContainerLayout
             android:id="@+id/tag_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="18dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            style="@style/TagGroup" />
+            android:layout_margin="0dp"
+            android:padding="10dp"
+            app:container_enable_drag="false"
+            app:horizontal_interval="10dp"
+            app:vertical_interval="10dp"
+            app:tag_clickable="true"
+            app:tag_background_color="@android:color/white"
+            app:tag_border_color="@color/colorPrimary"
+            app:container_background_color="#ececec"
+            app:container_border_color="#ececec"
+            tag_ripple_color="#000000"
+            app:tag_theme="pure_teal" />
 
         <Button
             android:id="@+id/btnSelectTag"

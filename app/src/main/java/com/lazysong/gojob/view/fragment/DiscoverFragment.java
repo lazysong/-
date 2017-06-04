@@ -1,7 +1,9 @@
 package com.lazysong.gojob.view.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,10 +28,12 @@ import com.lazysong.gojob.view.activity.PostInfoDetailActivity;
 import com.lazysong.gojob.view.activity.SelectTagActivity;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import me.gujun.android.taggroup.TagGroup;
+import co.lujun.androidtagview.TagContainerLayout;
+import co.lujun.androidtagview.TagView;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -46,11 +50,16 @@ public class DiscoverFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private TagGroup tagGroup;
+    private TagContainerLayout tagGroup;
     private RecyclerView recyclerView;
     private Button btnToSelectTag;
 
     private List<PostInformation> postInfoList;
+    private ArrayList<String> listPlaceSelected = new ArrayList<>();
+    private ArrayList<String> listIndustrySelected = new ArrayList<>();
+
+    DiscoverPostInfoTask discoverTask;
+    public static final int REQUEST_SELECT_TAG  = 1;
 
     public DiscoverFragment() {
     }
@@ -77,30 +86,40 @@ public class DiscoverFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discover, container, false);
-        tagGroup = (TagGroup) view.findViewById(R.id.tag_group);
-        tagGroup.setTags(new String[]{"最新发布", "最热职位", "内推职位"});
+        tagGroup = (TagContainerLayout) view.findViewById(R.id.tag_group);
+        tagGroup.setTags(new String[]{"北京", "上海", "软件开发"});
+        List<String> tagStrs = tagGroup.getTags();
+        TagView tagView;
+        for (int i = 0; i < tagStrs.size(); i++) {
+            tagView = tagGroup.getTagView(i);
+            tagView.setTagTextColor(Color.WHITE);
+            tagView.setTagBackgroundColor(SelectTagActivity.COLOR_PRIMARY);
+        }
+        listPlaceSelected.add(0, "北京");
+        listPlaceSelected.add(1, "上海");
+        listIndustrySelected.add(0, "软件开发");
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleviewDiscover);
         btnToSelectTag = (Button) view.findViewById(R.id.btnSelectTag);
         btnToSelectTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setClass(getContext(), SelectTagActivity.class);
-                startActivity(intent);
+                intent.setClass(getActivity(), SelectTagActivity.class);
+                startActivityForResult(intent, REQUEST_SELECT_TAG);
             }
         });
-        DiscoverPostInfoTask task = new DiscoverPostInfoTask("1");
-        task.execute();
+        discoverTask = new DiscoverPostInfoTask(listPlaceSelected, listIndustrySelected);
+        discoverTask.execute();
         return view;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) activity;
         } else {
-            throw new RuntimeException(context.toString()
+            throw new RuntimeException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -117,15 +136,26 @@ public class DiscoverFragment extends Fragment {
 
     class DiscoverPostInfoTask extends AsyncTask<Void, Void, String> {
         private final String BASE_URL = "http://www.lazysong.cn:8080/Test";
-        private final String userId;
         private final OkHttpClient client = new OkHttpClient();
+        private ArrayList<String> listPlaceSelected;
+        private ArrayList<String> listIndustrySelected;
 
-        public DiscoverPostInfoTask(String userId) {
-            this.userId = userId;
+        public DiscoverPostInfoTask(ArrayList<String> listPlaceSelected, ArrayList<String> listIndustrySelected) {
+            this.listPlaceSelected = listPlaceSelected;
+            this.listIndustrySelected = listIndustrySelected;
+        }
+
+        public void setListIndustrySelected(ArrayList<String> listIndustrySelected) {
+            this.listIndustrySelected = listIndustrySelected;
+        }
+
+        public void setListPlaceSelected(ArrayList<String> listPlaceSelected) {
+            this.listPlaceSelected = listPlaceSelected;
         }
 
         @Override
         protected String doInBackground(Void... params) {
+            //TODO 根据listPlaceSelected和listIndustrySelected加载数据
             String urlStr = BASE_URL + "/Test/a.scaction?limit=10";
             Request request = new Request.Builder().url(urlStr).build();
             Response response;
@@ -141,6 +171,8 @@ public class DiscoverFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "似乎出了点问题", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return result;
         }
@@ -150,7 +182,7 @@ public class DiscoverFragment extends Fragment {
             Gson gson = new Gson();
             postInfoList = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
             recyclerView.setAdapter(new PostInfoAdapter());
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             super.onPostExecute(result);
         }
     }
@@ -184,7 +216,7 @@ public class DiscoverFragment extends Fragment {
 
         @Override
         public ViewCache onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
             View itemView = inflater.inflate(R.layout.listview_item_postinfo, parent, false);
             ViewCache viewCache = new ViewCache(itemView);
             return viewCache;
@@ -206,7 +238,7 @@ public class DiscoverFragment extends Fragment {
                     intent.putExtra("postId", postInfo.getPost_id());
                     Gson gson = new Gson();
                     intent.putExtra("postInfo", gson.toJson(postInfo));
-                    intent.setClass(getContext(), PostInfoDetailActivity.class);
+                    intent.setClass(getActivity(), PostInfoDetailActivity.class);
                     startActivity(intent);
                 }
             });
@@ -222,5 +254,26 @@ public class DiscoverFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         mListener.onChangeToolbarTitle(MainActivity.FRAGMENT_DISCOVER);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == SelectTagActivity.RESULT_OK) {
+            listPlaceSelected = data.getStringArrayListExtra("listPlaceSelected");
+            listIndustrySelected = data.getStringArrayListExtra("listIndustrySelected");
+            Toast.makeText(getActivity(),
+                    "listPlaceSelected size " + listPlaceSelected.size()
+                            + " listIndustrySelected size " + listIndustrySelected.size(),
+                    Toast.LENGTH_SHORT).show();
+            //TODO 重新载入Listview中的数据
+            //TODO 重新设置discoverTask的参宿，并执行discoverTask
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        discoverTask.cancel(true);
     }
 }

@@ -1,5 +1,6 @@
 package com.lazysong.gojob.view.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -31,8 +32,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HomeFragment extends Fragment {
@@ -48,9 +51,12 @@ public class HomeFragment extends Fragment {
 
     private List<PostInformation> postInfoList;
     private PostInformation postInfo;
+    private String userId;
 
     private OnFragmentInteractionListener mListener;
 
+    TestParaTask testParaTask;
+    RequestRecommandTask recommandTask;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -71,6 +77,8 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        userId = getUserId();
     }
 
     @Override
@@ -78,20 +86,16 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         recycleViewRemdPost = (RecyclerView) view.findViewById(R.id.recycleview_remd_post);
-        RequestRecommandTask task = new RequestRecommandTask("1");
-        task.execute();
+        recommandTask = new RequestRecommandTask("1");
+        recommandTask.execute();
+        testParaTask = new TestParaTask("s");
+        testParaTask.execute();
         return view;
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onAttach(Activity context) {
+        super.onAttach(getActivity());
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -104,6 +108,12 @@ public class HomeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public String getUserId() {
+        //TODO 从本地加载userId
+        String userId = "1";
+        return userId;
     }
 
     public interface OnFragmentInteractionListener {
@@ -124,17 +134,57 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setClass(getContext(), SearchActivity.class);
+                intent.setClass(getActivity(), SearchActivity.class);
                 startActivity(intent);
             }
         });
     }
 
-    class MyRequest {
+    class TestParaTask extends AsyncTask<Void, Void, String> {
 
-    }
-    class MyResult {
+        private final String BASE_URL = "http://10.50.248.96:8080/GoJob";
+        private final String userId;
+        private final OkHttpClient client = new OkHttpClient();
 
+        public TestParaTask(String userId) {
+            this.userId = userId;
+        }
+        @Override
+        protected String doInBackground(Void... params) {
+            String urlStr = BASE_URL + "/a.scaction?requestcode=100";
+            Response response;
+
+            RequestBody formBody = new FormBody.Builder()
+                    .add("arg_cities", "suzhou, shanghai")
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(urlStr)
+                    .post(formBody)
+                    .build();
+            String result = null;
+            try {
+                response = client.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    result = response.body().string();
+                }
+                else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), "似乎出了点问题", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+        }
     }
     class RequestRecommandTask extends AsyncTask<Void, Void, String> {
         private final String BASE_URL = "http://www.lazysong.cn:8080/Test";
@@ -146,7 +196,7 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected String doInBackground(Void... params) {
-            String urlStr = BASE_URL + "/Test/a.scaction?limit=10";
+            String urlStr = BASE_URL + "/a.scaction?limit=10";
             Request request = new Request.Builder().url(urlStr).build();
             Response response;
             String result = null;
@@ -161,7 +211,9 @@ public class HomeFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "似乎出了点问题", Toast.LENGTH_SHORT).show();
-            }
+            } catch (Exception e) {
+            e.printStackTrace();
+        }
             return result;
         }
 
@@ -170,7 +222,7 @@ public class HomeFragment extends Fragment {
             Gson gson = new Gson();
             postInfoList = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
             recycleViewRemdPost.setAdapter(new RecommandPostInfoAdapter());
-            recycleViewRemdPost.setLayoutManager(new LinearLayoutManager(getContext()));
+            recycleViewRemdPost.setLayoutManager(new LinearLayoutManager(getActivity()));
             super.onPostExecute(result);
         }
     }
@@ -204,7 +256,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         public ViewCache onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
             View itemView = inflater.inflate(R.layout.listview_item_postinfo, parent, false);
             ViewCache viewCache = new ViewCache(itemView);
             return viewCache;
@@ -224,9 +276,10 @@ public class HomeFragment extends Fragment {
                 public void onClick(View v) {
                     Intent intent = new Intent();
                     intent.putExtra("postId", postInfo.getPost_id());
+                    intent.putExtra("userId", userId);//userId默认为1
                     Gson gson = new Gson();
                     intent.putExtra("postInfo", gson.toJson(postInfo));
-                    intent.setClass(getContext(), PostInfoDetailActivity.class);
+                    intent.setClass(getActivity(), PostInfoDetailActivity.class);
                     startActivity(intent);
                 }
             });
@@ -236,5 +289,12 @@ public class HomeFragment extends Fragment {
         public int getItemCount() {
             return postInfoList.size();
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        recommandTask.cancel(true);
+        testParaTask.cancel(true);
     }
 }

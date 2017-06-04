@@ -16,12 +16,15 @@
             layout="@layout/toolbar_layout" />
 
         <ImageView
+            android:id="@+id/imgFinishSelectTag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignRight="@id/toolbarSelectTag"
             android:layout_centerVertical="true"
             android:layout_marginRight="14dp"
-            android:src="@drawable/done" />
+            android:src="@drawable/done"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"/>
     </RelativeLayout>
 
 
@@ -40,46 +43,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/corners_bg"
-                android:orientation="vertical"
-                android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
-                android:paddingTop="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="已选择" />
-
-                <me.gujun.android.taggroup.TagGroup
-                    android:id="@+id/tag_group_selected"
-                    style="@style/TagGroup"
-                    app:atg_isAppendMode="true" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/corners_bg"
-                android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
-                android:paddingTop="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="推荐" />
-
-                <me.gujun.android.taggroup.TagGroup
-                    android:id="@+id/tag_group_recommand"
-                    style="@style/TagGroup" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/corners_bg"
                 android:orientation="vertical"
@@ -90,11 +53,23 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="公司" />
+                    android:text="行业类别" />
 
-                <me.gujun.android.taggroup.TagGroup
-                    android:id="@+id/tag_group_company"
-                    style="@style/TagGroup" />
+                <co.lujun.androidtagview.TagContainerLayout
+                    android:id="@+id/tag_group_industry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:padding="10dp"
+                    app:container_enable_drag="true"
+                    app:horizontal_interval="10dp"
+                    app:vertical_interval="10dp"
+                    app:tag_clickable="true"
+                    app:tag_background_color="@android:color/white"
+                    app:tag_border_color="@color/colorPrimary"
+                    app:container_background_color="#ececec"
+                    app:container_border_color="#ececec"
+                    app:tag_theme="none" />
             </LinearLayout>
 
 
@@ -113,9 +88,22 @@
                     android:layout_height="wrap_content"
                     android:text="地点" />
 
-                <me.gujun.android.taggroup.TagGroup
+                <co.lujun.androidtagview.TagContainerLayout
                     android:id="@+id/tag_group_place"
-                    style="@style/TagGroup" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:padding="10dp"
+                    app:container_enable_drag="true"
+                    app:horizontal_interval="10dp"
+                    app:vertical_interval="10dp"
+                    app:tag_background_color="@android:color/white"
+                    app:tag_border_color="@color/colorPrimary"
+                    app:container_background_color="#ececec"
+                    app:container_border_color="#ececec"
+                    app:tag_clickable="true"
+                    app:tag_theme="none" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

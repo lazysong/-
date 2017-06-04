@@ -53,7 +53,7 @@
         <activity android:name=".view.activity.ModifyUserActivity" />
         <activity android:name=".view.activity.PostInfoDetailActivity" />
         <activity android:name=".view.activity.SearchActivity" />
-        <activity android:name=".view.activity.SelectTagActivity"></activity>
+        <activity android:name=".view.activity.SelectTagActivity"/>
     </application>
 
 </manifest>

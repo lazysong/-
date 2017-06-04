@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,7 +36,7 @@ import com.lazysong.gojob.module.beans.PostInformation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements View.OnKeyListener {
     private Toolbar toolbar;
     private TextView txtTitle;
     private ImageView imgBack;
@@ -56,6 +58,8 @@ public class SearchActivity extends AppCompatActivity {
     private List<PostInformation> postInfoPlace;
     private List<PostInformation> postInfoPosition;
 
+    private int currentPosition;
+
     private final String[] tableTitles = new String[]{"综合", "公司", "地点", "职位"};
 
     @Override
@@ -63,25 +67,8 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-//        txtTitle = (TextView) findViewById(R.id.titleToolbar);
-//        txtTitle.setText("搜索");
-
-        /*toolbar = (Toolbar) findViewById(R.id.toolbar_base);
-        toolbar.setNavigationIcon(R.drawable.pre);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SearchActivity.this.finish();
-            }
-        });*/
-
-        //消除actionBar的显示/隐藏动画，并且隐藏actionBar
-//        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-//        actionBar.setShowHideAnimationEnabled(false);
-//        actionBar.hide();
-
-
         edtSearch = (EditText) findViewById(R.id.edtSearch);
+        edtSearch.setOnKeyListener(this);
         imgBack = (ImageView) findViewById(R.id.imgBack);
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +156,7 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             ((ViewPager) container).addView(viewContainer.get(position));
+            currentPosition = position;
             return viewContainer.get(position);
         }
 
@@ -187,6 +175,37 @@ public class SearchActivity extends AppCompatActivity {
             return tableTitles[position];
         }
     };
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_ENTER){
+            String keyword = edtSearch.getText().toString().trim();
+            Toast.makeText(this, keyword, Toast.LENGTH_SHORT).show();
+            doSearch(keyword, currentPosition);
+            return true;
+        }
+        return false;
+    }
+
+    private void doSearch(String keyword, int search_by) {
+        switch (search_by) {
+            case 0:
+                //TODO 查询综合结果并显示
+                break;
+            case 1:
+                //TODO 根据公司查询并显示结果
+                break;
+            case 2:
+                //TODO 根据地点查询并显示结果
+                break;
+            case 3:
+                //TODO 根据职位查询并显示结果
+                break;
+            default:
+                //TODO 根据职位查询并显示结果
+        }
+    }
+
     class SearchTask extends AsyncTask<Void, Void, String> {
         private final String keyword;
 

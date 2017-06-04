@@ -27,11 +27,23 @@
                     android:layout_row="0"
                     android:text="公司名称"/>
                 <TextView
+                    android:id="@+id/txtCompanyNameDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="0"/>
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:layout_row="1"
                     android:text="职位名称"/>
+                <TextView
+                    android:id="@+id/txtPositionNameDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="1"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -39,11 +51,23 @@
                     android:layout_row="2"
                     android:text="薪酬水平"/>
                 <TextView
+                    android:id="@+id/txtSalaryDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="2"/>
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:layout_row="3"
                     android:text="福利待遇"/>
+                <TextView
+                    android:id="@+id/txtWelfareDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="3"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -51,17 +75,60 @@
                     android:layout_row="4"
                     android:text="工作地点"/>
                 <TextView
+                    android:id="@+id/txtWorkplaceDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="4"/>
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:layout_row="5"
                     android:text="学历要求"/>
                 <TextView
+                    android:id="@+id/txtEduReqDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="5"/>
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:layout_row="6"
-                    android:text="公司名称"/>
+                    android:text="工作性质"/>
+                <TextView
+                    android:id="@+id/txtWorkTypeDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="6"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="7"
+                    android:text="工作经历要求"/>
+                <TextView
+                    android:id="@+id/txtWorkExperienceetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="7"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="8"
+                    android:text="发布日期"/>
+                <TextView
+                    android:id="@+id/txtPostTimeDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="8"/>
+
             </GridLayout>
         </RelativeLayout>
     </ScrollView>
@@ -83,6 +150,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignParentRight="true"
-            android:src="@drawable/icon_mark1"/>
+            android:src="@drawable/icon_mark1"
+            android:background="@drawable/touch_bg"/>
     </RelativeLayout>
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.lazysong.gojob.view.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -102,7 +103,7 @@ public class HomeFragmentTest extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Activity context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -124,26 +125,26 @@ public class HomeFragmentTest extends Fragment implements View.OnClickListener {
         final int id = v.getId();
         switch (id) {
             case R.id.login:
-                intent.setClass(getContext(), QQLoginActivity.class);
+                intent.setClass(getActivity(), QQLoginActivity.class);
                 intent.putExtra("appId", "1106011236");
                 startActivity(intent);
                 break;
             case R.id.btnQuery:
-                intent.setClass(getContext(), QueryActivity.class);
+                intent.setClass(getActivity(), QueryActivity.class);
                 String limit = editTextLimit.getText().toString();
                 intent.putExtra("limit", limit);
                 startActivity(intent);
                 break;
             case R.id.btnToAccount:
-                intent.setClass(getContext(), AccountActivity.class);
+                intent.setClass(getActivity(), AccountActivity.class);
                 startActivity(intent);
                 break;
             case R.id.testNetworkConnection:
-                intent.setClass(getContext(), NetworkConnActivity.class);
+                intent.setClass(getActivity(), NetworkConnActivity.class);
                 startActivity(intent);
                 break;
             case R.id.userInfoManage:
-                intent.setClass(getContext(), UserManageActivity.class);
+                intent.setClass(getActivity(), UserManageActivity.class);
                 startActivity(intent);
                 break;
             default:
