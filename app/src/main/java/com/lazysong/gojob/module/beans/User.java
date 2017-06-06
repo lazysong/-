@@ -4,9 +4,9 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by lazysong on 2017/3/1.
@@ -17,8 +17,8 @@ public class User extends BaseUser implements Parcelable {
     public User() {
     }
 
-    public User(String userid, String nickname, Bitmap img, String imgName, int sex, Date birthday, String sign) {
-        super(userid, nickname, imgName, sex, birthday, sign);
+    public User(String userid, String nickname, Bitmap img, String imgName, int sex, Date birthday, String sign, String password) {
+        super(userid, nickname, imgName, sex, birthday, sign, password);
         this.img = img;
     }
 
@@ -51,7 +51,7 @@ public class User extends BaseUser implements Parcelable {
         sign = in.readString();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            birthday = format.parse(in.readString());
+            birthday = (Date) format.parse(in.readString());
         } catch (ParseException e) {
             e.printStackTrace();
         }

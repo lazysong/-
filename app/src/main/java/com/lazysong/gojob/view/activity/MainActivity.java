@@ -11,7 +11,12 @@ import android.support.v7.widget.Toolbar;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.lazysong.gojob.R;
+import com.lazysong.gojob.module.LocalInfoManager;
+import com.lazysong.gojob.module.beans.User;
 import com.lazysong.gojob.view.fragment.*;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +36,43 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     public final static int FRAGMENT_DISCOVER = 2;
     public final static int FRAGMENT_MESSAGE = 3;
     public final static int FRAGMENT_ACCOUNT = 4;
+    private LocalInfoManager localManager;
+    private boolean logined;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initBottomNavigationBar();
+
+        loadLoginState();
+        if (logined)
+            loadUserInfo();
         createFragmentList();
         //设置默认的Fragment，即HomeFramgnet
         setDefaultFragment(position);
         //设置ToolBar
         setToolBar();
+    }
+
+    private void loadLoginState() {
+        localManager = new LocalInfoManager(this);
+        JSONObject jsonObject = localManager.getLogPref();
+        try {
+            logined = jsonObject.getBoolean("logined");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadUserInfo() {
+        JSONObject jsonObject = localManager.getUserInfo();
+        try {
+            user = (User) jsonObject.get("user");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createFragmentList() {

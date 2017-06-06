@@ -15,7 +15,7 @@
             android:id="@+id/layoutUserInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="@drawable/touch_bg_account_listview">
 
             <ImageView
                 android:id="@+id/imgUser"
@@ -71,83 +71,153 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RelativeLayout
-                    android:id="@+id/layoutMark"
+                <com.andexert.library.RippleView
+                    rv_centered="true"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_listview_account"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/set_bar"
-                    android:paddingLeft="10dp">
+                    android:layout_height="?android:actionBarSize">
 
-                    <ImageView
-                        android:id="@+id/imgMark"
-                        android:layout_width="@dimen/size_listview_icon_account"
-                        android:layout_height="@dimen/size_listview_icon_account"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/ic_activity_want_to" />
+                    <RelativeLayout
+                        android:id="@+id/layoutMark"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_listview_account"
+                        android:background="@drawable/touch_bg_account_listview"
+                        android:paddingLeft="10dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="12dp"
-                        android:layout_toRightOf="@id/imgMark"
-                        android:text="我的收藏"
-                        android:textColor="@color/ColorTextGray" />
-                </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/imgMark"
+                            android:layout_width="@dimen/size_listview_icon_account"
+                            android:layout_height="@dimen/size_listview_icon_account"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="10dp"
+                            android:alpha="20"
+                            android:src="@mipmap/ic_favorite_more"
+                            android:tint="@android:color/darker_gray" />
 
-                <RelativeLayout
-                    android:id="@+id/layoutWatch"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="12dp"
+                            android:layout_toRightOf="@id/imgMark"
+                            android:text="我的收藏"
+                            android:textColor="@color/ColorTextGray" />
+                    </RelativeLayout>
+                </com.andexert.library.RippleView>
+
+                <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_listview_account"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/set_bar"
-                    android:paddingLeft="10dp">
+                    android:layout_height="1px"
+                    android:layout_marginLeft="74dp"
+                    android:background="@color/textLightGray" />
 
-                    <ImageView
-                        android:id="@+id/imgWatch"
-                        android:layout_width="@dimen/size_listview_icon_account"
-                        android:layout_height="@dimen/size_listview_icon_account"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/ic_activity_has_join" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="12dp"
-                        android:layout_toRightOf="@id/imgWatch"
-                        android:text="我的关注"
-                        android:textColor="@color/ColorTextGray" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/layoutHistory"
+                <com.andexert.library.RippleView
+                    rv_centered="true"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_listview_account"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/set_bar"
-                    android:paddingLeft="10dp">
+                    android:layout_height="?android:actionBarSize">
 
-                    <ImageView
-                        android:id="@+id/imgHistory"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/ic_activity_has_join" />
+                    <RelativeLayout
+                        android:id="@+id/layoutFollow"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_listview_account"
+                        android:background="@drawable/touch_bg_account_listview"
+                        android:paddingLeft="10dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="12dp"
-                        android:layout_toRightOf="@id/imgHistory"
-                        android:text="浏览记录"
-                        android:textColor="@color/ColorTextGray" />
-                </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/imgWatch"
+                            android:layout_width="@dimen/size_listview_icon_account"
+                            android:layout_height="@dimen/size_listview_icon_account"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="10dp"
+                            android:src="@mipmap/ic_follow_more"
+                            android:tint="@android:color/darker_gray" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="12dp"
+                            android:layout_toRightOf="@id/imgWatch"
+                            android:text="我的关注"
+                            android:textColor="@color/ColorTextGray" />
+
+                    </RelativeLayout>
+                </com.andexert.library.RippleView>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="74dp"
+                    android:background="@color/textLightGray" />
+
+                <com.andexert.library.RippleView
+                    rv_centered="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="?android:actionBarSize">
+
+                    <RelativeLayout
+                        android:id="@+id/layoutWillings"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_listview_account"
+                        android:background="@drawable/touch_bg_account_listview"
+                        android:paddingLeft="10dp">
+
+                        <ImageView
+                            android:id="@+id/imgWillings"
+                            android:layout_width="@dimen/size_listview_icon_account"
+                            android:layout_height="@dimen/size_listview_icon_account"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="10dp"
+                            android:src="@mipmap/ic_willing_account"
+                            android:tint="@android:color/darker_gray" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="12dp"
+                            android:layout_toRightOf="@id/imgWillings"
+                            android:text="求职意向"
+                            android:textColor="@color/ColorTextGray" />
+                    </RelativeLayout>
+                </com.andexert.library.RippleView>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="74dp"
+                    android:background="@color/textLightGray" />
+
+                <com.andexert.library.RippleView
+                    rv_centered="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="?android:actionBarSize">
+
+                    <RelativeLayout
+                        android:id="@+id/layoutResume"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_listview_account"
+                        android:background="@drawable/touch_bg_account_listview"
+                        android:paddingLeft="10dp">
+
+                        <ImageView
+                            android:id="@+id/imgResume"
+                            android:layout_width="@dimen/size_listview_icon_account"
+                            android:layout_height="@dimen/size_listview_icon_account"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="10dp"
+                            android:src="@mipmap/ic_resume_account"
+                            android:tint="@android:color/darker_gray" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="12dp"
+                            android:layout_toRightOf="@id/imgResume"
+                            android:text="个人简历"
+                            android:textColor="@color/ColorTextGray" />
+                    </RelativeLayout>
+                </com.andexert.library.RippleView>
 
             </LinearLayout>
 
@@ -157,82 +227,37 @@
                 android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
-                <RelativeLayout
-                    android:id="@+id/layoutWillings"
+                <com.andexert.library.RippleView
+                    rv_centered="true"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_listview_account"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/set_bar"
-                    android:paddingLeft="10dp">
+                    android:layout_height="?android:actionBarSize">
 
-                    <ImageView
-                        android:id="@+id/imgWillings"
-                        android:layout_width="@dimen/size_listview_icon_account"
-                        android:layout_height="@dimen/size_listview_icon_account"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/ic_activity_has_join" />
+                    <RelativeLayout
+                        android:id="@+id/layoutSettings"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_listview_account"
+                        android:background="@drawable/touch_bg_account_listview"
+                        android:paddingLeft="10dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="12dp"
-                        android:layout_toRightOf="@id/imgWillings"
-                        android:text="求职意向"
-                        android:textColor="@color/ColorTextGray" />
-                </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/imgSettings"
+                            android:layout_width="@dimen/size_listview_icon_account"
+                            android:layout_height="@dimen/size_listview_icon_account"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="10dp"
+                            android:src="@mipmap/ic_setup_more"
+                            android:tint="@android:color/darker_gray" />
 
-                <RelativeLayout
-                    android:id="@+id/layoutResume"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_listview_account"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/set_bar"
-                    android:paddingLeft="10dp">
-
-                    <ImageView
-                        android:id="@+id/imgResume"
-                        android:layout_width="@dimen/size_listview_icon_account"
-                        android:layout_height="@dimen/size_listview_icon_account"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/ic_activity_has_join" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="12dp"
-                        android:layout_toRightOf="@id/imgResume"
-                        android:text="个人简历"
-                        android:textColor="@color/ColorTextGray" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/layoutSettings"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_listview_account"
-                    android:background="@drawable/set_bar"
-                    android:paddingLeft="10dp">
-
-                    <ImageView
-                        android:id="@+id/imgSettings"
-                        android:layout_width="@dimen/size_listview_icon_account"
-                        android:layout_height="@dimen/size_listview_icon_account"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/ic_activity_has_join" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="12dp"
-                        android:layout_toRightOf="@id/imgSettings"
-                        android:text="设置"
-                        android:textColor="@color/ColorTextGray" />
-                </RelativeLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="12dp"
+                            android:layout_toRightOf="@id/imgSettings"
+                            android:text="设置"
+                            android:textColor="@color/ColorTextGray" />
+                    </RelativeLayout>
+                </com.andexert.library.RippleView>
             </LinearLayout>
         </LinearLayout>
 

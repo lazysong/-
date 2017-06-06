@@ -144,7 +144,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
             android:textSize="16sp"
-            android:text="103人收藏"/>
+            android:text="10人收藏"/>
         <ImageView
             android:id="@+id/imgMarkDetail"
             android:layout_width="20dp"

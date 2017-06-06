@@ -9,7 +9,7 @@
     <dimen name="height_listview_account">58dp</dimen>
     <dimen name="height_listview_icon_account">36dp</dimen>
     <dimen name="width_listview_icon_account">36dp</dimen>
-    <dimen name="size_listview_icon_account">32dp</dimen>
+    <dimen name="size_listview_icon_account">28dp</dimen>
 
     <dimen name="text_size_actionbar_left">14sp</dimen>
     <dimen name="text_size_tab_actionbar">18sp</dimen>

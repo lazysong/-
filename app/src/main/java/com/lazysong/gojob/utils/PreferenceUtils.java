@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * Created by lazysong on 2017/3/14.
@@ -90,7 +90,7 @@ public class PreferenceUtils {
         user.setImgName(sp.getString("imgName", "userPic"));
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            user.setBirthday(format.parse(sp.getString("birthday", "unknown")));
+            user.setBirthday((java.sql.Date) format.parse(sp.getString("birthday", "unknown")));
         } catch (ParseException e) {
             e.printStackTrace();
             user.setBirthday(new Date(1990, 1, 1));

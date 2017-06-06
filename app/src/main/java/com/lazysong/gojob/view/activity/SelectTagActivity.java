@@ -1,6 +1,5 @@
 package com.lazysong.gojob.view.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -10,27 +9,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.controler.RequestCode;
-import com.lazysong.gojob.module.beans.Company;
 import com.lazysong.gojob.module.beans.Industry_category;
 import com.lazysong.gojob.module.beans.Place;
 import com.lazysong.gojob.utils.BaseAsyncTask;
 import com.lazysong.gojob.utils.GetAllTask;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import co.lujun.androidtagview.TagContainerLayout;
 import co.lujun.androidtagview.TagView;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class SelectTagActivity extends AppCompatActivity implements BaseAsyncTask.HandleView{
     private TagContainerLayout tagGroupIndustry;
@@ -44,7 +37,7 @@ public class SelectTagActivity extends AppCompatActivity implements BaseAsyncTas
     private ArrayList<String> listPlaceSelected = new ArrayList<>();
     private ArrayList<String> listIndustrySelected = new ArrayList<>();
     private TagView tagView;
-    private GetAllTask task;
+    private GetAllTask placeTask;
     private GetAllTask industryTask;
 
     public static final int COLOR_PRIMARY = 0xFF00d196;
@@ -72,7 +65,7 @@ public class SelectTagActivity extends AppCompatActivity implements BaseAsyncTas
         titleToolbar = (TextView) findViewById(R.id.titleToolbar);
         titleToolbar.setText("选择标签");
         toolbar = (Toolbar) findViewById(R.id.toolbar_base);
-        toolbar.setNavigationIcon(R.drawable.pre);
+        toolbar.setNavigationIcon(R.mipmap.md_nav_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,8 +152,8 @@ public class SelectTagActivity extends AppCompatActivity implements BaseAsyncTas
     private void prepareTagData() {
         //TODO 获取地点列表
         //TODO 获取行业类别表
-        task = new GetAllTask(RequestCode.GET_PLACES, this);
-        task.execute();
+        placeTask = new GetAllTask(RequestCode.GET_PLACES, this);
+        placeTask.execute();
         industryTask = new GetAllTask(RequestCode.GET_INDUSTRY, this);
         industryTask.execute();
     }
@@ -195,7 +188,10 @@ public class SelectTagActivity extends AppCompatActivity implements BaseAsyncTas
     @Override
     protected void onStop() {
         super.onStop();
-        if (task != null)
-            task.cancel(true);
+        if (placeTask != null)
+            placeTask.cancel(true);
+        if (industryTask != null) {
+            industryTask.cancel(true);
+        }
     }
 }

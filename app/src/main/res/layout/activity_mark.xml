@@ -4,18 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.activity.SettingsActivity">
+    tools:context="com.lazysong.gojob.view.activity.MarkActivity">
 
     <include
         android:id="@+id/toolbarSelectTag"
         layout="@layout/toolbar_layout" />
 
-    <Button
-        android:id="@+id/btnLogout"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycleviewPostInfoMark"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/logout"
-        android:textSize="24sp"
-        android:textColor="@color/red"/>
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

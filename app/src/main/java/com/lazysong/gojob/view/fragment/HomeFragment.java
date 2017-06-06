@@ -1,7 +1,6 @@
 package com.lazysong.gojob.view.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.module.beans.PostInformation;
@@ -39,19 +40,18 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HomeFragment extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String IS_LOGINED = "param1";
+    private static final String USER_ID = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private boolean logined;
+    private String userId;
 
     private ActionBar actionBar;
     private RecyclerView recycleViewRemdPost;
 
     private List<PostInformation> postInfoList;
     private PostInformation postInfo;
-    private String userId;
 
     private OnFragmentInteractionListener mListener;
 
@@ -61,11 +61,11 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static HomeFragment newInstance(String param1, String param2) {
+    public static HomeFragment newInstance(boolean logined, String userId) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putBoolean(IS_LOGINED, logined);
+        args.putString(USER_ID, userId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,11 +74,9 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            logined = getArguments().getBoolean(IS_LOGINED);
+            userId = getArguments().getString(USER_ID);
         }
-
-        userId = getUserId();
     }
 
     @Override
@@ -88,8 +86,8 @@ public class HomeFragment extends Fragment {
         recycleViewRemdPost = (RecyclerView) view.findViewById(R.id.recycleview_remd_post);
         recommandTask = new RequestRecommandTask("1");
         recommandTask.execute();
-        testParaTask = new TestParaTask("s");
-        testParaTask.execute();
+//        testParaTask = new TestParaTask("s");
+//        testParaTask.execute();
         return view;
     }
 
@@ -110,11 +108,6 @@ public class HomeFragment extends Fragment {
         mListener = null;
     }
 
-    public String getUserId() {
-        //TODO 从本地加载userId
-        String userId = "1";
-        return userId;
-    }
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -142,7 +135,7 @@ public class HomeFragment extends Fragment {
 
     class TestParaTask extends AsyncTask<Void, Void, String> {
 
-        private final String BASE_URL = "http://10.50.248.96:8080/GoJob";
+        private final String BASE_URL = "http://www.lazysong.cn:8080/GoJob";
         private final String userId;
         private final OkHttpClient client = new OkHttpClient();
 
@@ -187,7 +180,7 @@ public class HomeFragment extends Fragment {
         }
     }
     class RequestRecommandTask extends AsyncTask<Void, Void, String> {
-        private final String BASE_URL = "http://www.lazysong.cn:8080/Test";
+        private final String BASE_URL = "http://www.lazysong.cn:8080/GoJob";
         private final String userId;
         private final OkHttpClient client = new OkHttpClient();
 
@@ -196,7 +189,8 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected String doInBackground(Void... params) {
-            String urlStr = BASE_URL + "/a.scaction?limit=10";
+            String urlStr = BASE_URL + "/a.scaction?requestcode=22&PLACE_NAME=苏州&limit=10";
+//            String urlStr = BASE_URL + "/a.scaction?limit=10";
             Request request = new Request.Builder().url(urlStr).build();
             Response response;
             String result = null;
@@ -219,7 +213,8 @@ public class HomeFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String result) {
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+            Log.v("songhui", "result:" + result);
             postInfoList = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
             recycleViewRemdPost.setAdapter(new RecommandPostInfoAdapter());
             recycleViewRemdPost.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -283,6 +278,7 @@ public class HomeFragment extends Fragment {
                     startActivity(intent);
                 }
             });
+
         }
 
         @Override
@@ -294,7 +290,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        recommandTask.cancel(true);
-        testParaTask.cancel(true);
+        if (recommandTask != null)
+            recommandTask.cancel(true);
+        if (testParaTask != null)
+            testParaTask.cancel(true);
     }
 }

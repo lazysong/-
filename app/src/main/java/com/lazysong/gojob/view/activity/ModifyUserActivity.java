@@ -22,7 +22,7 @@ import com.lazysong.gojob.module.beans.User;
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,7 +109,7 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
         baseUser.setImgName(baseUser.getUserid() + ".png");
         SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd");
         try {
-            baseUser.setBirthday(format.parse(edtBirthday.getText().toString()));
+            baseUser.setBirthday((java.sql.Date) format.parse(edtBirthday.getText().toString()));
         } catch (ParseException e) {
             e.printStackTrace();
             baseUser.setBirthday(new Date(1990,1,1));

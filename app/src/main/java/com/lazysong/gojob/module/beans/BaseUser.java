@@ -1,29 +1,40 @@
 package com.lazysong.gojob.module.beans;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * Created by lazysong on 2017/4/2.
  */
 public class BaseUser implements Serializable{
+    @SerializedName("user_id")
     protected String userid;
+    @SerializedName("nickname")
     protected String nickname;
+    @SerializedName("img_name")
     protected String imgName;
+    @SerializedName("sex")
     protected int sex;
+    @SerializedName("birthday")
     protected Date birthday;
+    @SerializedName("sign")
     protected String sign;
+    @SerializedName("password")
+    protected String password;
 
     public BaseUser() {
     }
 
-    public BaseUser(String userid, String nickname, String imgName, int sex, Date birthday, String sign) {
+    public BaseUser(String userid, String nickname, String imgName, int sex, Date birthday, String sign, String password) {
         this.userid = userid;
         this.nickname = nickname;
         this.imgName = imgName;
         this.sex = sex;
         this.birthday = birthday;
         this.sign = sign;
+        this.password = password;
     }
 
     public String getImgName() {
@@ -72,6 +83,14 @@ public class BaseUser implements Serializable{
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void initUser() {

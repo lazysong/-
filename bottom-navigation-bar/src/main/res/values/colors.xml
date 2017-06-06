@@ -21,6 +21,6 @@
     <color name="ColorTextGray">#797979</color>
     <color name="ColorTextLightGray">#ababab</color>
     <color name="ColorFragmetBackgroundLight">#dddddd</color>
-    <color name="ColorListviewIconBackground">#bababa</color>
     <color name="ColorFragmetBackgroundDark">#4d4d4d</color>
+    <color name="colorListViewBackgroundLight">#f7f7f7</color>
 </resources>

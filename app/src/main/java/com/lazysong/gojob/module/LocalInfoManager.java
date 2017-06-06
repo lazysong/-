@@ -16,9 +16,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by lazysong on 2017/3/17.
@@ -112,7 +112,7 @@ public class LocalInfoManager {
         user.setImgName(sp.getString("imgName", "userPic"));
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            user.setBirthday(format.parse(sp.getString("birthday", "1990-01-01")));
+            user.setBirthday((java.sql.Date) format.parse(sp.getString("birthday", "1990-01-01")));
         } catch (ParseException e) {
             e.printStackTrace();
             user.setBirthday(new Date(1990, 1, 1));
@@ -138,5 +138,21 @@ public class LocalInfoManager {
             e.printStackTrace();
         }
         return jsonObject;
+    }
+
+    public void setUserId(String userId) {
+        if (userId != null) {
+            editor.putString("userId", userId);
+        }
+        else {
+            editor.putString("userId", "unknown");
+        }
+        editor.commit();
+    }
+
+    public String getUserId() {
+        String userId;
+        userId = sp.getString("userId", "unknown");
+        return userId;
     }
 }

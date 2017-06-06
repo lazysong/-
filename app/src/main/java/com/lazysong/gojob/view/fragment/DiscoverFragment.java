@@ -1,7 +1,6 @@
 package com.lazysong.gojob.view.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.module.beans.PostInformation;
@@ -39,12 +39,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class DiscoverFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -135,7 +133,7 @@ public class DiscoverFragment extends Fragment {
     }
 
     class DiscoverPostInfoTask extends AsyncTask<Void, Void, String> {
-        private final String BASE_URL = "http://www.lazysong.cn:8080/Test";
+        private final String BASE_URL = "http://www.lazysong.cn:8080/GoJob";
         private final OkHttpClient client = new OkHttpClient();
         private ArrayList<String> listPlaceSelected;
         private ArrayList<String> listIndustrySelected;
@@ -156,7 +154,7 @@ public class DiscoverFragment extends Fragment {
         @Override
         protected String doInBackground(Void... params) {
             //TODO 根据listPlaceSelected和listIndustrySelected加载数据
-            String urlStr = BASE_URL + "/Test/a.scaction?limit=10";
+            String urlStr = BASE_URL + "/a.scaction?requestcode=22&PLACE_NAME=苏州&limit=5";
             Request request = new Request.Builder().url(urlStr).build();
             Response response;
             String result = null;
@@ -179,7 +177,7 @@ public class DiscoverFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String result) {
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
             postInfoList = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
             recyclerView.setAdapter(new PostInfoAdapter());
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

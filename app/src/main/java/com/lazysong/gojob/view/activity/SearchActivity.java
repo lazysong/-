@@ -1,10 +1,5 @@
 package com.lazysong.gojob.view.activity;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,31 +7,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.adapter.ResultCompanyAdapter;
+import com.lazysong.gojob.controler.RequestCode;
 import com.lazysong.gojob.module.beans.PostInformation;
+import com.lazysong.gojob.utils.MarkInfoTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class SearchActivity extends AppCompatActivity implements View.OnKeyListener {
+public class SearchActivity extends AppCompatActivity implements View.OnKeyListener, MarkInfoTask.OnDataGotListener {
     private Toolbar toolbar;
     private TextView txtTitle;
     private ImageView imgBack;
@@ -57,8 +53,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnKeyListe
     private List<PostInformation> postInfoCompany;
     private List<PostInformation> postInfoPlace;
     private List<PostInformation> postInfoPosition;
-
-    private int currentPosition;
+    private MarkInfoTask searchTaskPlace;
+    private MarkInfoTask searchTaskCompany;
+    private MarkInfoTask searchTaskPosition;
 
     private final String[] tableTitles = new String[]{"综合", "公司", "地点", "职位"};
 
@@ -88,16 +85,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnKeyListe
             viewContainer.add(2, v2);
             viewContainer.add(3, v3);
         }
-
         viewPager = (ViewPager) findViewById(R.id.viewpagerResult);
         viewPager.setAdapter(pagerAdapter);
-        initData();
-
-        //消除actionBar的显示/隐藏动画，并且隐藏actionBar
-//        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-//        actionBar.setShowHideAnimationEnabled(false);
-//        actionBar.hide();
-
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.addTab(mTabLayout.newTab().setText("0"), true);
         for(int i = 1; i < viewContainer.size(); i++) {
@@ -114,31 +103,19 @@ public class SearchActivity extends AppCompatActivity implements View.OnKeyListe
         mTabLayout.setTabsFromPagerAdapter(pagerAdapter);
     }
 
-    private void initData() {
-        String result = "[{\"post_id\":890,\"company_name\":\"达富电脑（常熟）有限公司\",\"salary_month\":\"面议\",\"work_place\":\"苏州\",\"post_date\":\"Sep 26, 2016 12:00:00 AM\",\"work_type\":\"全职\",\"experience_requirement\":\"不限\",\"education_requirement\":\"不限\",\"position_count\":1,\"position_type\":\"软件测试\"},{\"post_id\":891,\"company_name\":\"苏州达内信息科技有限公司第一分公司\",\"salary_month\":\"4001-6000元/月\",\"work_place\":\"苏州\",\"post_date\":\"Mar 2, 2017 12:00:00 AM\",\"work_type\":\"全职\",\"experience_requirement\":\"不限\",\"education_requirement\":\"不限\",\"position_count\":5,\"position_type\":\"用户界面（UI）设计\"},{\"post_id\":892,\"company_name\":\"苏州科技城管理委员会\",\"salary_month\":\"面议\",\"work_place\":\"苏州\",\"post_date\":\"Mar 2, 2017 12:00:00 AM\",\"work_type\":\"全职\",\"experience_requirement\":\"不限\",\"education_requirement\":\"大专\",\"position_count\":1,\"position_type\":\"采购专员/助理\"},{\"post_id\":893,\"company_name\":\"苏州达内信息科技有限公司第一分公司\",\"salary_month\":\"4001-6000元/月\",\"work_place\":\"苏州\",\"post_date\":\"Mar 2, 2017 12:00:00 AM\",\"work_type\":\"全职\",\"experience_requirement\":\"不限\",\"education_requirement\":\"不限\",\"position_count\":5,\"position_type\":\"广告文案策划\"},{\"post_id\":894,\"company_name\":\"苏州赛科计算机信息系统有限公司\",\"salary_month\":\"4000-7000元/月\",\"work_place\":\"苏州姑苏区\",\"post_date\":\"Mar 2, 2017 12:00:00 AM\",\"work_type\":\"全职\",\"experience_requirement\":\"1-3年\",\"education_requirement\":\"大专\",\"position_count\":2,\"position_type\":\"软件工程师\"}]";
-        Gson gson = new Gson();
-        postInfoCompany = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
-        postInfoPlace = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
-        postInfoPosition = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
+
+    private void initTab() {
+        listResIntegrate = (RecyclerView) v0.findViewById(R.id.listResIntegrate);
+
+        listResCompany = (RecyclerView) v1.findViewById(R.id.listResICompany);
+//        listResCompany.setAdapter(new ResultCompanyAdapter(postInfoCompany, this));
+//        listResCompany.setLayoutManager(new LinearLayoutManager(this));
+
+        listResPlace = (RecyclerView) v2.findViewById(R.id.listResPlace);
+
+        listResPosition = (RecyclerView) v3.findViewById(R.id.listResPosition);
     }
 
-    private void initTabIntegrate(View v) {
-        listResIntegrate = (RecyclerView) v.findViewById(R.id.listResIntegrate);
-    }
-
-    private void initTabCompany(View v) {
-        listResCompany = (RecyclerView) v.findViewById(R.id.listResICompany);
-        listResCompany.setAdapter(new ResultCompanyAdapter(postInfoCompany, this));
-        listResCompany.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private void initTypeTab(View v) {
-
-    }
-
-    private void initMark(View v) {
-
-    }
 
     PagerAdapter pagerAdapter = new PagerAdapter() {
         //viewpager中的组件数量
@@ -156,7 +133,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnKeyListe
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             ((ViewPager) container).addView(viewContainer.get(position));
-            currentPosition = position;
+//            currentPosition = position;
             return viewContainer.get(position);
         }
 
@@ -174,6 +151,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnKeyListe
         public CharSequence getPageTitle(int position) {
             return tableTitles[position];
         }
+
     };
 
     @Override
@@ -181,22 +159,35 @@ public class SearchActivity extends AppCompatActivity implements View.OnKeyListe
         if(keyCode==KeyEvent.KEYCODE_ENTER){
             String keyword = edtSearch.getText().toString().trim();
             Toast.makeText(this, keyword, Toast.LENGTH_SHORT).show();
-            doSearch(keyword, currentPosition);
+            doSearch(keyword, mTabLayout.getSelectedTabPosition());
             return true;
         }
         return false;
     }
 
     private void doSearch(String keyword, int search_by) {
+        Log.v("songhui", "selectedPositon = " + mTabLayout.getSelectedTabPosition());
+        List<Map<String, String>> params = new ArrayList();
+        Map<String, String> map = new HashMap<>();
         switch (search_by) {
             case 0:
                 //TODO 查询综合结果并显示
                 break;
             case 1:
                 //TODO 根据公司查询并显示结果
+                map.put("name", "COMPANY_NAME");
+                map.put("value", keyword);
+                params.add(map);
+                searchTaskCompany = new MarkInfoTask(RequestCode.SEARCH_BY_COMPANY, params, this);
+                searchTaskCompany.execute();
                 break;
             case 2:
                 //TODO 根据地点查询并显示结果
+                map.put("name", "PLACE_NAME");
+                map.put("value", keyword);
+                params.add(map);
+                searchTaskPlace = new MarkInfoTask(RequestCode.SEARCH_BY_PLACES, params, this);
+                searchTaskPlace.execute();
                 break;
             case 3:
                 //TODO 根据职位查询并显示结果
@@ -206,23 +197,43 @@ public class SearchActivity extends AppCompatActivity implements View.OnKeyListe
         }
     }
 
-    class SearchTask extends AsyncTask<Void, Void, String> {
-        private final String keyword;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initTab();
+    }
 
-        public SearchTask(String keyword) {
-            this.keyword = keyword;
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (searchTaskPlace != null) {
+            searchTaskPlace.cancel(true);
         }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return null;
+        if (searchTaskCompany != null) {
+            searchTaskCompany.cancel(true);
+        }
+        if (searchTaskPosition != null) {
+            searchTaskPosition.cancel(true);
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        initTabIntegrate(v0);
-        initTabCompany(v1);
+    public void onDataGot(int requestcode, String result) {
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        switch (requestcode) {
+            case RequestCode.SEARCH_BY_PLACES:
+                Log.v("songhui", "result search by places:" + result);
+                postInfoPlace = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
+                listResPlace.setAdapter(new ResultCompanyAdapter(postInfoPlace, this));
+                listResPlace.setLayoutManager(new LinearLayoutManager(this));
+                break;
+            case RequestCode.SEARCH_BY_COMPANY:
+                Log.v("songhui", "result search by company:" + result);
+                postInfoCompany = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
+                listResCompany.setAdapter(new ResultCompanyAdapter(postInfoCompany, this));
+                listResCompany.setLayoutManager(new LinearLayoutManager(this));
+                break;
+        }
     }
+
 }

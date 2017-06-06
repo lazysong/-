@@ -52,8 +52,8 @@ public class BaseRequestData implements UrlConstructor{
             case RequestCode.CAT_USER: // 查看用户的信息
             case RequestCode.GET_RECOMAND: // 获取系统推荐的招聘信息
             case RequestCode.CAT_RESUME: // 查看个人简历
-            case RequestCode.CAT_MARK: // 查看个人收藏的招聘信息
-            case RequestCode.CAT_WATCH: // 查看关注的公司信息
+            case RequestCode.CAT_MARK_INFO: // 查看个人收藏的招聘信息
+            case RequestCode.CAT_MARK_COM: // 查看关注的公司信息
             case RequestCode.CAT_WILLING: // 查看个人求职意向
                 userid = (String) data.get("userid");
                 builder.append("/Test/a.scaction?requestCode=" + requestCode)
