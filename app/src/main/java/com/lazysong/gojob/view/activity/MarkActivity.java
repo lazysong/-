@@ -64,7 +64,7 @@ public class MarkActivity extends AppCompatActivity implements MarkInfoTask.OnDa
     @Override
     public void onDataGot(int requestcode, String result) {
         //TODO remove test statement
-        result = "[{\"post_id\":1,\"company_name\":\"苏州微木智能系统有限公司\",\"salary_month\":\"6000-10000元/月\",\"work_place\":\"苏州\",\"post_date\":\"2017-03-23\",\"work_type\":\"全职\",\"experience_requirement\":\"不限\",\"education_requirement\":\"本科\",\"position_count\":1,\"position_type\":\"软件工程师\",\"category_name\":\"软件开发\"}]";
+//        result = "[{\"post_id\":1,\"company_name\":\"苏州微木智能系统有限公司\",\"salary_month\":\"6000-10000元/月\",\"work_place\":\"苏州\",\"post_date\":\"2017-03-23\",\"work_type\":\"全职\",\"experience_requirement\":\"不限\",\"education_requirement\":\"本科\",\"position_count\":1,\"position_type\":\"软件工程师\",\"category_name\":\"软件开发\"}]";
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         if (requestcode == RequestCode.CAT_MARK_INFO) {
             listPostinfoMark = gson.fromJson(result, new TypeToken<List<PostInformation>>(){}.getType());
@@ -74,8 +74,8 @@ public class MarkActivity extends AppCompatActivity implements MarkInfoTask.OnDa
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         if (markTask != null) {
             markTask.cancel(true);
         }

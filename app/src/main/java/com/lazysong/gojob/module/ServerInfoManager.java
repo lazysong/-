@@ -8,18 +8,13 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lazysong.gojob.controler.RequestCode;
-import com.lazysong.gojob.controler.UrlConstructor;
-import com.lazysong.gojob.module.beans.BaseUser;
 import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.MyUser;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,9 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -73,27 +66,27 @@ public class ServerInfoManager{
         requestCode = requestData.getRequestCode();
         // 构造url字符串
         String urlStr = requestData.constructUrlString(BASE_URL);
-        User user;
+        MyUser user;
         switch (requestCode) {
             case RequestCode.CAT_USER:
                 InputStream input = null;
-                BaseUser baseUser = null;
+                User baseUser = null;
                 try {
                     input = downladUrl(urlStr);
                     baseUser = readStreamUser(input);
                     input.close();
                     if(baseUser == null)
                         return null;
-                    Bitmap bitmap = downloadImg(BASE_URL + "/img/" + baseUser.getImgName());
-                    user = new User(baseUser, bitmap);
+                    Bitmap bitmap = downloadImg(BASE_URL + "/img/" + baseUser.getImg_name());
+                    user = new MyUser(baseUser, bitmap);
                     result.put("user", user);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case RequestCode.EDIT_USER:
-                user = (User) requestData.getData().get("user");
-                String fileName = user.getImgName();
+                user = (MyUser) requestData.getData().get("user");
+                String fileName = user.getImg_name();
                 File file = new File(context.getFilesDir(), fileName);
                 try {
                     FileOutputStream outputStream = context.openFileOutput(fileName, context.MODE_PRIVATE);
@@ -109,7 +102,7 @@ public class ServerInfoManager{
                 }
                 Map<String, Object> map = new HashMap<String, Object>();
                 Gson gson = new Gson();
-                String baseUserStr = gson.toJson(user.getBaseuser(), BaseUser.class);
+                String baseUserStr = gson.toJson(user.getBaseuser(), User.class);
                 map.put("baseUser", baseUserStr);
                 postFile(urlStr, map, file);
                 return null;
@@ -170,8 +163,8 @@ public class ServerInfoManager{
         return bitmap;
     }
 
-    private BaseUser readStreamUser(InputStream input) {
-        BaseUser user = null;
+    private User readStreamUser(InputStream input) {
+        User user = null;
         String result = "";
         if (input != null) {
             // Converts Stream to String with max length of 500.
@@ -181,7 +174,7 @@ public class ServerInfoManager{
                 e.printStackTrace();
             }
             Gson gson = new Gson();
-            user = gson.fromJson(result, BaseUser.class);
+            user = gson.fromJson(result, User.class);
         }
 
         return user;
@@ -220,9 +213,9 @@ public class ServerInfoManager{
         return false;
     }
 
-    public User getUserInfo() {
+    public MyUser getUserInfo() {
 
-        User user = new User();
+        MyUser user = new MyUser();
         return user;
     }
 
@@ -236,14 +229,14 @@ public class ServerInfoManager{
      * 根据userId从服务器获取User信息
      * */
     public JSONObject getUserInfo(String userId) {
-        User user = new User();
-        user.setUserid("123434");
+        MyUser user = new MyUser();
+        user.setUser_id("123434");
         user.setNickname("我是服务器的Nickname");
         user.setImg(BitmapFactory.decodeFile("picName.png"));
         return null;
     }
 
-    public void saveUserInfo(User user) {
+    public void saveUserInfo(MyUser user) {
         Toast.makeText(context, "用户信息成功保存到服务器", Toast.LENGTH_SHORT).show();
     }
 }

@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.lazysong.gojob.R;
-import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.MyUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,12 +39,7 @@ public class LocalInfoManager {
      * 向本地SharedPreference文件中写入登录状态
      **/
     public void setLogin(boolean isLogin) {
-        if (isLogin) {
-            editor.putBoolean("logined", true);
-        }
-        else {
-            editor.putBoolean("logined", false);
-        }
+        editor.putBoolean("logined", isLogin);
         editor.commit();
     }
 
@@ -62,24 +57,29 @@ public class LocalInfoManager {
         return jsonObject;
     }
 
+    public boolean getLogin() {
+        boolean logined = sp.getBoolean("logined", false);
+        return logined;
+    }
+
     /**
      * 向本地的SharedPreference文件中写入登录User实体
      * */
-    public void setUser(User user) {
+    public void setUser(MyUser user) {
         if (user != null) {
-            editor.putString("userId", user.getUserid());
+            editor.putString("userId", user.getUser_id());
             editor.putString("nickname", user.getNickname());
-            editor.putString("imgName", user.getImgName());
+            editor.putString("img_name", user.getImg_name());
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             editor.putString("birthday", format.format(user.getBirthday()));
 //            editor.putString("birthday", "1990-01-01");
 //            editor.putString("birthday", user.getBirthday().toString() + " ");
             editor.putString("sex", user.getSex() + "");
             editor.putString("sign", user.getSign());
-            if(user.getImgName() != null) {
+            if(user.getImg_name() != null) {
                 try {
-                    Log.v("user", user.getImgName());
-                    FileOutputStream outputStream = context.openFileOutput(user.getImgName(), context.MODE_PRIVATE);
+                    Log.v("user", user.getImg_name());
+                    FileOutputStream outputStream = context.openFileOutput(user.getImg_name(), context.MODE_PRIVATE);
                     byte[] buffer = new byte[1024 * 100];
                     Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.bilibili);
                     if (user.getImg() != null)
@@ -106,20 +106,20 @@ public class LocalInfoManager {
      * 从本地SharedPreference文件中构造User实体
      * */
     public JSONObject getUserInfo() {
-        User user = new User();
-        user.setUserid(sp.getString("userId", "unknown"));
+        MyUser user = new MyUser();
+        user.setUser_id(sp.getString("userId", "unknown"));
         user.setNickname(sp.getString("nickname", "unknown"));
-        user.setImgName(sp.getString("imgName", "userPic"));
+        user.setImg_name(sp.getString("img_name", "userPic"));
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            user.setBirthday((java.sql.Date) format.parse(sp.getString("birthday", "1990-01-01")));
+            user.setBirthday(new Date(format.parse(sp.getString("birthday", "1990-01-01")).getTime()));
         } catch (ParseException e) {
             e.printStackTrace();
             user.setBirthday(new Date(1990, 1, 1));
         }
 //        user.setBirthday(new Date(1990, 1, 1));
         try {
-            FileInputStream inputStream = context.openFileInput(user.getImgName());
+            FileInputStream inputStream = context.openFileInput(user.getImg_name());
             byte[] buffer = new byte[1024*100];
             inputStream.read(buffer);
             user.setImg(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));

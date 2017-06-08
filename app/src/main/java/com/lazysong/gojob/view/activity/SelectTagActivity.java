@@ -186,8 +186,8 @@ public class SelectTagActivity extends AppCompatActivity implements BaseAsyncTas
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         if (placeTask != null)
             placeTask.cancel(true);
         if (industryTask != null) {

@@ -1,29 +1,27 @@
 package com.lazysong.gojob.module;
 
-import com.lazysong.gojob.controler.RequestCode;
-import com.lazysong.gojob.module.BaseRequestData;
-import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.MyUser;
 
 /**
  * Created by lazysong on 2017/4/4.
  */
 public class UploadUserRequestData extends BaseRequestData {
-    private User user;
+    private MyUser user;
 
-    public UploadUserRequestData(User user) {
+    public UploadUserRequestData(MyUser user) {
         this.user = user;
     }
 
-    public UploadUserRequestData(int requestCode, User user) {
+    public UploadUserRequestData(int requestCode, MyUser user) {
         super(requestCode);
         this.user = user;
     }
 
-    public User getUser() {
+    public MyUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(MyUser user) {
         this.user = user;
     }
 }

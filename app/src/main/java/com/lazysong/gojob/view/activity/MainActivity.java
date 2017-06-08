@@ -11,8 +11,10 @@ import android.support.v7.widget.Toolbar;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.lazysong.gojob.R;
+import com.lazysong.gojob.controler.RequestCode;
 import com.lazysong.gojob.module.LocalInfoManager;
-import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.MyUser;
+import com.lazysong.gojob.utils.MarkInfoTask;
 import com.lazysong.gojob.view.fragment.*;
 
 import org.json.JSONException;
@@ -23,7 +25,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener,
         HomeFragment.OnFragmentInteractionListener, MessageFragment.OnFragmentInteractionListener,
-        DiscoverFragment.OnFragmentInteractionListener,AccountFragment.OnFragmentInteractionListener {
+        DiscoverFragment.OnFragmentInteractionListener,AccountFragment.OnFragmentInteractionListener,
+        MarkInfoTask.OnDataGotListener, AccountFragmentNew.OnFragmentInteractionListener {
     private BottomNavigationBar bottomNavigationBar;
     private int position = 0;
     private Toolbar toolbar;
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     public final static int FRAGMENT_ACCOUNT = 4;
     private LocalInfoManager localManager;
     private boolean logined;
-    private User user;
+    private MyUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private void loadUserInfo() {
         JSONObject jsonObject = localManager.getUserInfo();
         try {
-            user = (User) jsonObject.get("user");
+            user = (MyUser) jsonObject.get("user");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         fragmentList.add(0, new HomeFragment());
         fragmentList.add(1, new DiscoverFragment());
         fragmentList.add(2, new MessageFragment());
-        fragmentList.add(3, new AccountFragment());
+        fragmentList.add(3, new AccountFragmentNew());
     }
 
     private void setToolBar() {
@@ -182,5 +185,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         currentFragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_container, currentFragment).commit();
+    }
+
+    @Override
+    public void onDataGot(int requestcode, String result) {
+        if (requestcode == RequestCode.CAT_USER) {
+            ((AccountFragmentNew)fragmentList.get(3)).onResopnse(requestcode, result);
+        }
+        else if (requestcode == RequestCode.USER_EXISTS) {
+            ((AccountFragmentNew)fragmentList.get(3)).onResopnse(requestcode, result);
+        }
+        else if (requestcode == RequestCode.UPLOAD_USER) {
+            ((AccountFragmentNew)fragmentList.get(3)).onResopnse(requestcode, result);
+        }
     }
 }

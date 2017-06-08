@@ -16,8 +16,8 @@ import com.lazysong.gojob.module.BaseRequestData;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.controler.RequestCode;
 import com.lazysong.gojob.module.ServerInfoManager;
-import com.lazysong.gojob.module.beans.BaseUser;
 import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.MyUser;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
@@ -35,7 +35,7 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
     private EditText edtBirthday;
     private EditText edtSex;
     private ImageView imgUser;
-    private BaseUser baseUser;
+    private User user;
     private Bitmap img;
 //    private final static String BASEURL = "http://192.168.196.184:8080";//虚拟机地址
     private final static String BASEURL = "http://192.168.18.188:8080";//本地地址
@@ -46,7 +46,7 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_modify_user);
 
         Intent intent = getIntent();
-        baseUser = (BaseUser) intent.getSerializableExtra("baseUser");
+        user = (User) intent.getSerializableExtra("user");
         byte[] imgBytes = intent.getByteArrayExtra("img");
         img = BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length);
         initViews();
@@ -65,12 +65,12 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
         btnCancle.setOnClickListener(this);
         imgUser.setOnClickListener(this);
 
-        if(baseUser != null) {
-            tvUserid.setText(baseUser.getUserid());
-            edtNickname.setText(baseUser.getNickname());
-            edtSign.setText(baseUser.getSign());
-            edtBirthday.setText(baseUser.getBirthday().getYear() + "");
-            edtSex.setText(baseUser.getSex() + "");
+        if(user != null) {
+            tvUserid.setText(user.getUser_id());
+            edtNickname.setText(user.getNickname());
+            edtSign.setText(user.getSign());
+            edtBirthday.setText(user.getBirthday().getYear() + "");
+            edtSex.setText(user.getSex() + "");
             imgUser.setImageBitmap(img);
         }
     }
@@ -81,15 +81,15 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
         switch (id) {
             case R.id.confirm_edit:
                 getUserFromView();
-                if (baseUser != null) {
+                if (user != null) {
                     UploadUserInfoTask task = new UploadUserInfoTask();
-                    User user = new User(baseUser, img);
+                    MyUser user = new MyUser(this.user, img);
                     task.execute(user);
                     ByteArrayOutputStream bao = new ByteArrayOutputStream();
                     img.compress(Bitmap.CompressFormat.PNG, 100, bao);
                     byte[] imgBytes= bao.toByteArray();
                     Intent intent = new Intent();
-                    intent.putExtra("baseUser", baseUser);
+                    intent.putExtra("user", this.user);
                     intent.putExtra("img", imgBytes);
                     setResult(CatUserActivity.MODIFY_SUCCESS, intent);
                 }
@@ -104,25 +104,25 @@ public class ModifyUserActivity extends AppCompatActivity implements View.OnClic
 
     private void getUserFromView() {
 
-        baseUser.setNickname(edtNickname.getText().toString());
-        baseUser.setSign(edtSign.getText().toString());
-        baseUser.setImgName(baseUser.getUserid() + ".png");
+        user.setNickname(edtNickname.getText().toString());
+        user.setSign(edtSign.getText().toString());
+        user.setImg_name(user.getUser_id() + ".png");
         SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd");
         try {
-            baseUser.setBirthday((java.sql.Date) format.parse(edtBirthday.getText().toString()));
+            user.setBirthday((java.sql.Date) format.parse(edtBirthday.getText().toString()));
         } catch (ParseException e) {
             e.printStackTrace();
-            baseUser.setBirthday(new Date(1990,1,1));
+            user.setBirthday(new Date(1990,1,1));
         }
-        baseUser.setSex(Integer.parseInt(edtSex.getText().toString()));
+        user.setSex(Integer.parseInt(edtSex.getText().toString()));
 //        user.setImg(imgUser.getDrawingCache());
     }
 
-    private class UploadUserInfoTask extends AsyncTask<User, Void, Void> {
+    private class UploadUserInfoTask extends AsyncTask<MyUser, Void, Void> {
 
         @Override
-        protected Void doInBackground(User... users) {
-            User user = users[0];
+        protected Void doInBackground(MyUser... users) {
+            MyUser user = users[0];
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("user", user);
             BaseRequestData requestData = new BaseRequestData(RequestCode.EDIT_USER, data);

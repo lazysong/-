@@ -204,8 +204,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnKeyListe
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         if (searchTaskPlace != null) {
             searchTaskPlace.cancel(true);
         }

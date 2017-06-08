@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
-import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.MyUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,16 +51,16 @@ public class PreferenceUtils {
         return jsonObject;
     }
 
-    public static void writeUserInfo(Context context, boolean isLogin, User user) {
+    public static void writeUserInfo(Context context, boolean isLogin, MyUser user) {
         SharedPreferences sp = context.getSharedPreferences("loginpref", android.app.Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
         if (isLogin && user != null) {
             editor.putBoolean("logined", true);
-            editor.putString("userId", user.getUserid());
+            editor.putString("userId", user.getUser_id());
             editor.putString("nickname", user.getNickname());
             try {
-                FileInputStream input = context.openFileInput(user.getImgName());
+                FileInputStream input = context.openFileInput(user.getImg_name());
                 byte[] buffer = new byte[1024*100];
                 input.read(buffer);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
@@ -84,10 +84,10 @@ public class PreferenceUtils {
     public static JSONObject readUserInfo(Context context) {
         SharedPreferences sp = context.getSharedPreferences("loginpref", android.app.Activity.MODE_PRIVATE);
         boolean logined = sp.getBoolean("logined", false);
-        User user = new User();
-        user.setUserid(sp.getString("userId", "unknown"));
+        MyUser user = new MyUser();
+        user.setUser_id(sp.getString("userId", "unknown"));
         user.setNickname(sp.getString("nickname", "unknown"));
-        user.setImgName(sp.getString("imgName", "userPic"));
+        user.setImg_name(sp.getString("img_name", "userPic"));
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             user.setBirthday((java.sql.Date) format.parse(sp.getString("birthday", "unknown")));

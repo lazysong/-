@@ -134,6 +134,7 @@ public class DiscoverFragment extends Fragment {
 
     class DiscoverPostInfoTask extends AsyncTask<Void, Void, String> {
         private final String BASE_URL = "http://www.lazysong.cn:8080/GoJob";
+//        private final String BASE_URL = "http://192.168.0.104:8080/GoJob";
         private final OkHttpClient client = new OkHttpClient();
         private ArrayList<String> listPlaceSelected;
         private ArrayList<String> listIndustrySelected;
@@ -154,7 +155,7 @@ public class DiscoverFragment extends Fragment {
         @Override
         protected String doInBackground(Void... params) {
             //TODO 根据listPlaceSelected和listIndustrySelected加载数据
-            String urlStr = BASE_URL + "/a.scaction?requestcode=22&PLACE_NAME=苏州&limit=5";
+            String urlStr = BASE_URL + "/a.scaction?requestcode=25&PLACE_NAME=苏州&limit=5";
             Request request = new Request.Builder().url(urlStr).build();
             Response response;
             String result = null;
@@ -270,8 +271,8 @@ public class DiscoverFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         discoverTask.cancel(true);
     }
 }

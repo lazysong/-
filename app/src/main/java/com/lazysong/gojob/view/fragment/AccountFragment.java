@@ -1,11 +1,9 @@
 package com.lazysong.gojob.view.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +12,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +23,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.lazysong.gojob.controler.RequestCode;
-import com.lazysong.gojob.module.beans.BaseUser;
+import com.lazysong.gojob.module.beans.Resume;
+import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.Willings;
 import com.lazysong.gojob.utils.MarkInfoTask;
 import com.lazysong.gojob.view.activity.CheckUserInfoActivity;
 import com.lazysong.gojob.module.LocalInfoManager;
@@ -37,7 +39,7 @@ import com.lazysong.gojob.view.activity.MarkActivity;
 import com.lazysong.gojob.view.activity.ResumeActivity;
 import com.lazysong.gojob.view.activity.SettingsActivity;
 import com.lazysong.gojob.utils.Util;
-import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.MyUser;
 import com.lazysong.gojob.view.activity.WillingsActivity;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.common.Constants;
@@ -49,7 +51,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +62,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class AccountFragment extends Fragment implements View.OnClickListener {
+public class AccountFragment extends Fragment implements View.OnClickListener, MarkInfoTask.OnDataGotListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -70,7 +71,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private User user;
+    private MyUser user;
     private boolean logined;
 
     private OnFragmentInteractionListener mListener;
@@ -92,6 +93,8 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
     private String userId;
     private TestParaTask addUserTask;
+    private MarkInfoTask userInfoTask;
+    private MarkInfoTask userExistsTask;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -113,7 +116,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        user = new User();
+        user = new MyUser();
         user.initUser();
         localManager = new LocalInfoManager(getActivity());
         serverManger = new ServerInfoManager(getActivity());
@@ -124,45 +127,83 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         initViews(view);
-
         loadLoginState();
-        //如果已经登录过，则加载本地保存的User信息
-        if (logined)
-            loadUserInfo();
-        setUiData();
+        if (logined) {
+//            loadUserInfo(localManager.getUserId());
+            loadUserInfo("197");
+        }
 
-        //创建mTencent实例，作为QQ登录的事务代理
+//        setUiData();
         if (mTencent == null)
             mTencent = Tencent.createInstance(MainActivity.appId, getActivity());
 
-        addUserTask = new TestParaTask();
-        addUserTask.execute();
+//        addUserTask = new TestParaTask();
+//        addUserTask.execute();
         return view;
     }
 
-    class TestParaTask extends AsyncTask<Void, Void, String> {
+    @Override
+    public void onDataGot(int requestcode, String result) {
+        Log.v("user", "user:" + result);
+        if (requestcode == RequestCode.CAT_USER) {
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+            List<User> user = gson.fromJson(result, new TypeToken<List<User>>(){}.getType());
+//            userImage.setImageResource();
+            tvNickname.setText(user.get(0).getNickname());
+            sign.setText(user.get(0).getSign());
+        }
+        else if (requestcode == RequestCode.USER_EXISTS) {
+            if (result.equals("USER_EXISTS=true\n")) { //用户存在
+                Log.v("userExists", "用户存在，openId = " + mTencent.getOpenId());
+                //TODO 加载用户的信息，包括nickname，userId, img
+            }
+            else if (result.equals("USER_EXISTS=false\n")) {
+                //TODO 添加用户，使用qq的nickname，openId，img
+                //TODO 加载用户的信息，包括nickname， userId，img
+                Log.v("userExists", "用户不存在，openId = " + mTencent.getOpenId());
+            }
+        }
 
-        private final String BASE_URL = "http://192.168.43.60:8080/Test";
+    }
+
+    class TestParaTask extends AsyncTask<Void, Void, String> {
+        private final String BASE_URL = "http://192.168.0.104:8080/Test";
+//        private final String BASE_URL = "http://www.lazysong.cn:8080/Test";
         private final OkHttpClient client = new OkHttpClient();
 
         @Override
         protected String doInBackground(Void... params) {
-            String urlStr = BASE_URL + "/a.scaction?requestcode=" + RequestCode.TEST_JSON;
+            String urlStr = BASE_URL + "/a.scaction?requestcode=" + RequestCode.ADD_WILLINGS;
             Response response;
 
-            BaseUser user = new BaseUser();
-            user.setNickname("lazysong");
-            user.setUserid("193");
-            user.setSex(1);
-            user.setImgName("imgname");
-            user.setBirthday(new Date(1990, 1,1));
-            user.setPassword("password");
-            user.setSign("sign");
             Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-            String userStr = gson.toJson(user);
+
+            /*User user = new User();
+            user.setNickname("立二拆四");
+            user.setUser_id("201");
+//            user.setSex(1);
+            user.setImg_name("imgname");
+//            user.setBirthday(new Date(1990, 1,1));
+            user.setPassword("password");
+            user.setSign("I am 201");
+            String userStr = gson.toJson(user);*/
+
+            /*Resume resume = new Resume();
+            resume.setEducation_experience("中国科学技术大学软件工程硕士");
+            resume.setJob_experience("虹软公司");
+            resume.setUser_id(1 + "");
+            resume.setResume_no((byte) 1);
+            String resumeStr = gson.toJson(resume);*/
+
+            Willings willings = new Willings();
+            willings.setUser_id(1 + "");
+            willings.setWilling_no((byte) 2);
+            willings.setCategory_id(1);
+            willings.setSalary_month(5000 + "");
+            String willingStr = gson.toJson(willings, Willings.class);
 
             RequestBody formBody = new FormBody.Builder()
-                    .add("USER_INFO", userStr)
+                    .add("WILLING", willingStr)
                     .build();
 
             Request request = new Request.Builder()
@@ -194,7 +235,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void setUiData() {
+    /*private void setUiData() {
         if(!logined) {
             tvNickname.setText("点击登录");
             sign.setText("未设置");
@@ -206,28 +247,14 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             userImage.setImageBitmap(user.getImg());
         tvNickname.setText(user.getNickname());
         sign.setText(user.getSign());
-    }
+    }*/
 
-    //对布局控件进行初始化
     private void initViews(View view) {
         userImage = (ImageView) view.findViewById(R.id.imgUser);
         sign = (TextView) view.findViewById(R.id.tvsign);
         tvNickname = (TextView) view.findViewById(R.id.tvNickname);
         layoutUserInfo = (RelativeLayout) view.findViewById(R.id.layoutUserInfo);
-        layoutUserInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!logined)
-                    QQLogin();
-                else {
-                    //跳转到编辑用户信息界面
-                    Intent intent = new Intent();
-                    intent.setClass(getActivity(), CheckUserInfoActivity.class);
-                    intent.putExtra("user", (Parcelable) user);
-                    startActivity(intent);
-                }
-            }
-        });
+        layoutUserInfo.setOnClickListener(this);
         layoutSettings = (RelativeLayout) view.findViewById(R.id.layoutSettings);
         layoutSettings.setOnClickListener(this);
         layoutMark = (RelativeLayout) view.findViewById(R.id.layoutMark);
@@ -263,8 +290,18 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         Intent intent = new Intent();
         final int id = v.getId();
         //TODO 取消logined = true
-        logined = true;
+//        logined = true;
         switch (id) {
+            case R.id.layoutUserInfo:
+                if(!logined)
+                    QQLogin();
+                else {
+                    //跳转到编辑用户信息界面
+                    intent.setClass(getActivity(), CheckUserInfoActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
+                    startActivity(intent);
+                }
+                break;
             case R.id.layoutSettings:
                 intent.setClass(getActivity(), SettingsActivity.class);
                 startActivityForResult(intent, MainActivity.REQUEST_SETTINGS);
@@ -275,7 +312,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     return;
                 }
                 intent.setClass(getActivity(), FollowActivity.class);
-                intent.putExtra("userId", user.getUserid());
+                intent.putExtra("userId", user.getUser_id());
                 startActivity(intent);
                 break;
             case R.id.layoutMark:
@@ -284,7 +321,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     return;
                 }
                 intent.setClass(getActivity(), MarkActivity.class);
-//                intent.putExtra("userId", user.getUserid());
+//                intent.putExtra("userId", user.getUser_id());
                 intent.putExtra("userId", "1");
                 startActivity(intent);
                 break;
@@ -294,7 +331,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     return;
                 }
                 intent.setClass(getActivity(), ResumeActivity.class);
-                intent.putExtra("userId", user.getUserid());
+                intent.putExtra("userId", user.getUser_id());
                 startActivity(intent);
                 break;
             case R.id.layoutWillings:
@@ -303,7 +340,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     return;
                 }
                 intent.setClass(getActivity(), WillingsActivity.class);
-                intent.putExtra("userId", user.getUserid());
+                intent.putExtra("userId", user.getUser_id());
                 startActivity(intent);
                 break;
         }
@@ -322,34 +359,14 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void loadUserInfo() {
-        JSONObject jsonObject = localManager.getUserInfo();
-        try {
-            user = (User) jsonObject.get("user");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    //为控件设置监听器
-    private void initListener() {
-        layoutUserInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!logined)
-                    QQLogin();
-                else {
-                    //跳转到编辑用户信息界面
-                    Intent intent = new Intent();
-                    intent.setClass(getActivity(), CheckUserInfoActivity.class);
-                    intent.putExtra("user", (Parcelable) user);
-                    startActivity(intent);
-                }
-            }
-        });
-        layoutSettings.setOnClickListener(this);
+    private void loadUserInfo(String userId) {
+        List<Map<String, String>> params = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+        map.put("name", "USER_ID");
+        map.put("value", userId);
+        params.add(map);
+        userInfoTask = new MarkInfoTask(RequestCode.CAT_USER, params, getActivity());
+        userInfoTask.execute();
     }
 
     private void QQLogin() {
@@ -379,15 +396,23 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
 
     //根据网络请求的返回结果设置OpenId和AccessToken
-    public static void initOpenidAndToken(JSONObject jsonObject) {
+    public void initOpenidAndToken(JSONObject jsonObject) {
         try {
             String token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
             String expires = jsonObject.getString(Constants.PARAM_EXPIRES_IN);
-            String openId = jsonObject.getString(Constants.PARAM_OPEN_ID);
+            String openId = jsonObject.getString(Constants.PARAM_OPEN_ID);//根据appid和qq号码生成
             if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
                     && !TextUtils.isEmpty(openId)) {
                 mTencent.setAccessToken(token, expires);
                 mTencent.setOpenId(openId);
+                //TODO 将openId作为userId，查询用户是否存在
+                List<Map<String, String>> params = new ArrayList<>();
+                HashMap<String, String> map = new HashMap<>();
+                map.put("name", "USER_ID");
+                map.put("value", openId);
+                params.add(map);
+                userExistsTask = new MarkInfoTask(RequestCode.USER_EXISTS, params, getActivity());
+                userExistsTask.execute();
             }
         } catch(Exception e) {
         }
@@ -446,12 +471,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void handleMessage(Message msg) {
-            user.setUserid(mTencent.getOpenId());
+            user.setUser_id(mTencent.getOpenId());
 
             //如果不是首次登录，则从服务器下载用户数据
-            if (serverManger.userExists(user.getUserid())) {
+            if (serverManger.userExists(user.getUser_id())) {
                 try {
-                    user = (User) serverManger.getUserInfo(user.getUserid()).get("user");
+                    user = (MyUser) serverManger.getUserInfo(user.getUser_id()).get("user");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -461,7 +486,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     if (response.has("nickname")) {
                         try {
                             user.setNickname(response.getString("nickname"));
-                            user.setUserid(mTencent.getOpenId());
+                            user.setUser_id(mTencent.getOpenId());
                             tvNickname.setText(user.getNickname());
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -469,7 +494,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                     }
                 } else if (msg.what == 1) {
                     Bitmap bitmap = (Bitmap) msg.obj;
-                    user.setImgName(mTencent.getOpenId());
+                    user.setImg_name(mTencent.getOpenId());
                     user.setImg(bitmap);
                     userImage.setImageBitmap(bitmap);
                 }
@@ -530,7 +555,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             mTencent.logout(getActivity());
             logined = false;
             localManager.setLogin(logined);
-            setUiData();
+//            setUiData();
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -540,5 +565,19 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mListener.onChangeToolbarTitle(MainActivity.FRAGMENT_ACCOUNT);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (addUserTask != null) {
+            addUserTask.cancel(true);
+        }
+        else if (userExistsTask != null) {
+            userExistsTask.cancel(true);
+        }
+        else if (userInfoTask != null) {
+            userInfoTask.cancel(true);
+        }
     }
 }

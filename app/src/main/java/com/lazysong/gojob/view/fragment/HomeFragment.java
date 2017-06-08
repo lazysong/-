@@ -181,6 +181,7 @@ public class HomeFragment extends Fragment {
     }
     class RequestRecommandTask extends AsyncTask<Void, Void, String> {
         private final String BASE_URL = "http://www.lazysong.cn:8080/GoJob";
+//        private final String BASE_URL = "http://192.168.0.104:8080/Test";
         private final String userId;
         private final OkHttpClient client = new OkHttpClient();
 
@@ -189,7 +190,7 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected String doInBackground(Void... params) {
-            String urlStr = BASE_URL + "/a.scaction?requestcode=22&PLACE_NAME=苏州&limit=10";
+            String urlStr = BASE_URL + "/a.scaction?requestcode=25&PLACE_NAME=苏州&limit=10";
 //            String urlStr = BASE_URL + "/a.scaction?limit=10";
             Request request = new Request.Builder().url(urlStr).build();
             Response response;
@@ -288,11 +289,12 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         if (recommandTask != null)
             recommandTask.cancel(true);
         if (testParaTask != null)
             testParaTask.cancel(true);
     }
+
 }

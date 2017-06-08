@@ -6,8 +6,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lazysong.gojob.R;
+import com.lazysong.gojob.module.beans.MyUser;
 import com.lazysong.gojob.module.beans.User;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 
 public class CheckUserInfoActivity extends AppCompatActivity {
@@ -24,13 +26,13 @@ public class CheckUserInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_check_user_info);
 
         initViews();
-        user = (User) getIntent().getParcelableExtra("user");
-        img.setImageBitmap(user.getImg());
+        user = (User) getIntent().getSerializableExtra("user");
+//        img.setImageBitmap(user.getImg());
         nickname.setText(user.getNickname());
         sign.setText(user.getSign());
         sex.setText(user.getSex() + " ");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        birthday.setText(format.format(user.getBirthday()));
+        birthday.setText(user.getBirthday().getTime() + "");
     }
 
     private void initViews() {

@@ -13,22 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.lazysong.gojob.module.BaseRequestData;
 import com.lazysong.gojob.R;
 import com.lazysong.gojob.controler.RequestCode;
-import com.lazysong.gojob.controler.UrlConstructor;
 import com.lazysong.gojob.module.ServerInfoManager;
-import com.lazysong.gojob.module.UserRequestData;
-import com.lazysong.gojob.module.beans.BaseUser;
 import com.lazysong.gojob.module.beans.User;
+import com.lazysong.gojob.module.beans.MyUser;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +31,7 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
     private TextView tvSex;
     private TextView tvBirthday;
     private ImageView userImage;
-    private User user;
+    private MyUser user;
     private Button modifyUser;
     private TextView tvSign;
 
@@ -83,11 +75,11 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
                 if (user != null) {
                     Intent intent = new Intent();
                     intent.setClass(this, ModifyUserActivity.class);
-                    BaseUser baseUser = user.getBaseuser();
+                    User user = this.user.getBaseuser();
                     ByteArrayOutputStream bao = new ByteArrayOutputStream();
-                    user.getImg().compress(Bitmap.CompressFormat.PNG, 100, bao);
+                    this.user.getImg().compress(Bitmap.CompressFormat.PNG, 100, bao);
                     byte[] imgBytes = bao.toByteArray();
-                    intent.putExtra("baseUser", baseUser);
+                    intent.putExtra("user", user);
                     intent.putExtra("img", imgBytes);
                     startActivityForResult(intent, MODIFY_USER_INFO);
                 }
@@ -101,31 +93,31 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MODIFY_USER_INFO && resultCode == MODIFY_SUCCESS) {
-            BaseUser baseUser = (BaseUser) data.getSerializableExtra("baseUser");
+            User user = (User) data.getSerializableExtra("user");
             byte[] imgBytes = data.getByteArrayExtra("img");
             Bitmap img = BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length);
-            user = new User(baseUser, img);
-            postViewData(user);
+            this.user = new MyUser(user, img);
+            postViewData(this.user);
         }
     }
 
-    private class DownUserTask extends AsyncTask<String, Void, User> {
+    private class DownUserTask extends AsyncTask<String, Void, MyUser> {
 
         @Override
-        protected User doInBackground(String... urls) {
+        protected MyUser doInBackground(String... urls) {
             String userid = urls[0];
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put("userid", userid);
+            data.put("user_id", userid);
             BaseRequestData requestData = new BaseRequestData(RequestCode.CAT_USER, data);
             ServerInfoManager manager = new ServerInfoManager(CatUserActivity.this);
             Map<String, Object> result = manager.constrRequest(requestData).request();
-            user = (User) result.get("user");
+            user = (MyUser) result.get("user");
             return user;
         }
 
         @Override
-        protected void onPostExecute(User user) {
-            if(user != null && user.getUserid() != null) {
+        protected void onPostExecute(MyUser user) {
+            if(user != null && user.getUser_id() != null) {
                 CatUserActivity.this.user = user;
                 postViewData(user);
             }
@@ -135,7 +127,7 @@ public class CatUserActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void postViewData(User user) {
+    private void postViewData(MyUser user) {
         tvNickname.setText(user.getNickname());
         tvSex.setText(user.getSex() + "");
         tvBirthday.setText(user.getBirthday().getYear() + "年" + user.getBirthday().getMonth() + "月");

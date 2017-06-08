@@ -1,104 +1,101 @@
 package com.lazysong.gojob.module.beans;
 
-import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 /**
- * Created by lazysong on 2017/3/1.
+ * Created by lazysong on 2017/4/2.
  */
-public class User extends BaseUser implements Parcelable {
-    protected Bitmap img;
+public class User implements Serializable{
+    @SerializedName("user_id")
+    protected String user_id;
+    @SerializedName("nickname")
+    protected String nickname;
+    @SerializedName("img_name")
+    protected String img_name;//存储url
+    @SerializedName("sex")
+    protected int sex;
+    @SerializedName("birthday")
+    protected Date birthday;
+    @SerializedName("sign")
+    protected String sign;
+    @SerializedName("password")
+    protected String password;
 
     public User() {
     }
 
-    public User(String userid, String nickname, Bitmap img, String imgName, int sex, Date birthday, String sign, String password) {
-        super(userid, nickname, imgName, sex, birthday, sign, password);
-        this.img = img;
+    public User(String user_id, String nickname, String img_name, int sex, Date birthday, String sign, String password) {
+        this.user_id = user_id;
+        this.nickname = nickname;
+        this.img_name = img_name;
+        this.sex = sex;
+        this.birthday = birthday;
+        this.sign = sign;
+        this.password = password;
     }
 
-    public User(BaseUser baseUser, Bitmap bitmap) {
-        userid = baseUser.getUserid();
-        nickname = baseUser.getNickname();
-        imgName = baseUser.getImgName();
-        sex = baseUser.getSex();
-        birthday = baseUser.getBirthday();
-        sign = baseUser.getSign();
-        img = bitmap;
+    public String getImg_name() {
+        return img_name;
     }
 
-    public BaseUser getBaseuser() {
-        BaseUser baseUser = new BaseUser();
-        baseUser.setUserid(userid);
-        baseUser.setNickname(nickname);
-        baseUser.setImgName(imgName);
-        baseUser.setSex(sex);
-        baseUser.setBirthday(birthday);
-        baseUser.setSign(sign);
-        return baseUser;
-    }
-    protected User(Parcel in) {
-        userid = in.readString();
-        nickname = in.readString();
-        img = in.readParcelable(Bitmap.class.getClassLoader());
-        imgName = in.readString();
-        sex = in.readInt();
-        sign = in.readString();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            birthday = (Date) format.parse(in.readString());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    public void setImg_name(String img_name) {
+        this.img_name = img_name;
     }
 
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        @Override
-        public User createFromParcel(Parcel in) {
-            return new User(in);
-        }
-
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
-
-    public Bitmap getImg() {
-        return img;
+    public String getSign() {
+        return sign;
     }
 
-    public void setImg(Bitmap img) {
-        this.img = img;
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public int getSex() {
+        return sex;
+    }
+
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void initUser() {
         nickname = "点击登录";
         birthday = new Date(1990, 1, 1);
         sign = "未设置签名";
-        img = null;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(userid);
-        dest.writeString(nickname);
-        dest.writeParcelable(img, flags);
-        dest.writeString(imgName);
-        dest.writeInt(sex);
-        dest.writeString(sign);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        dest.writeString(format.format(birthday));
-    }
-
 }

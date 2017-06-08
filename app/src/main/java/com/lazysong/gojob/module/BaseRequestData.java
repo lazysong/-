@@ -2,7 +2,6 @@ package com.lazysong.gojob.module;
 
 import com.lazysong.gojob.controler.RequestCode;
 import com.lazysong.gojob.controler.UrlConstructor;
-import com.lazysong.gojob.module.beans.User;
 
 import java.util.Map;
 
@@ -55,33 +54,33 @@ public class BaseRequestData implements UrlConstructor{
             case RequestCode.CAT_MARK_INFO: // 查看个人收藏的招聘信息
             case RequestCode.CAT_MARK_COM: // 查看关注的公司信息
             case RequestCode.CAT_WILLING: // 查看个人求职意向
-                userid = (String) data.get("userid");
+                userid = (String) data.get("user_id");
                 builder.append("/Test/a.scaction?requestCode=" + requestCode)
-                        .append("&userid=" + userid);
+                        .append("&user_id=" + userid);
                 return builder.toString();
             case RequestCode.EDIT_USER:
                 builder.append("/Test/a.scaction?requestCode=" + requestCode);
                 return builder.toString();
             /*
-            * 按照分类查看招聘信息		userid,分类标准（如地点，行业类别），分类关键字	招聘信息集合（Gson格式）
+            * 按照分类查看招聘信息		user_id,分类标准（如地点，行业类别），分类关键字	招聘信息集合（Gson格式）
             * */
             case RequestCode.CAT_BY_CATEGRY:
-                userid = (String) data.get("userid");
+                userid = (String) data.get("user_id");
                 String categry = (String) data.get("categry");
                 keyword = (String) data.get("keyword");
                 builder.append("/Test/a.scaction?requestCode=" + requestCode)
-                        .append("&userid=" + userid)
+                        .append("&user_id=" + userid)
                         .append("&categry=" + categry)
                         .append("&keyword=" + keyword);
                 return builder.toString();
             /*
-            * 搜索关键字		userid,关键字	招聘信息集合（Gson格式）
+            * 搜索关键字		user_id,关键字	招聘信息集合（Gson格式）
             * */
             case RequestCode.SEARCH:
-                userid = (String) data.get("userid");
+                userid = (String) data.get("user_id");
                 keyword = (String) data.get("keyword");
                 builder.append("/Test/a.scaction?requestCode=" + requestCode)
-                        .append("&userid=" + userid)
+                        .append("&user_id=" + userid)
                         .append("&keyword=" + keyword);
                 return builder.toString();
             /*
@@ -105,30 +104,30 @@ public class BaseRequestData implements UrlConstructor{
                 builder.append("/Test/a.scaction?requestCode=" + requestCode);
                 return builder.toString();
             /*
-            *   收藏招聘信息		userid,招聘信息编号	是否成功
-                取消收藏招聘信息		userid,招聘信息编号	是否成功
-                隐藏招聘信息		userid,招聘信息编号	是否成功
+            *   收藏招聘信息		user_id,招聘信息编号	是否成功
+                取消收藏招聘信息		user_id,招聘信息编号	是否成功
+                隐藏招聘信息		user_id,招聘信息编号	是否成功
 
             * */
             case RequestCode.MARK_POST:
             case RequestCode.UNMARK_POST:
             case RequestCode.HIDE_POST:
-                userid = (String) data.get("userid");
+                userid = (String) data.get("user_id");
                 String postNo = (String) data.get("postNo");
                 builder.append("/Test/a.scaction?requestCode=" + requestCode)
-                        .append("&userid=" + userid)
+                        .append("&user_id=" + userid)
                         .append("&postNo=" + postNo);
                 return builder.toString();
             /*
-            *   关注某公司		userid,公司编号	是否成功
-                取消关注某公司		userid,公司编号	是否成功
+            *   关注某公司		user_id,公司编号	是否成功
+                取消关注某公司		user_id,公司编号	是否成功
             * */
             case RequestCode.WATCH_CMP:
             case RequestCode.UNWATCH_CMP:
-                userid = (String) data.get("userid");
+                userid = (String) data.get("user_id");
                 String cmpNo = (String) data.get("cmpNo");
                 builder.append("/Test/a.scaction?requestCode=" + requestCode)
-                        .append("&userid=" + userid)
+                        .append("&user_id=" + userid)
                         .append("&postNo=" + cmpNo);
                 return builder.toString();
         }
